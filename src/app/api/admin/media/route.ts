@@ -6,7 +6,8 @@ export async function POST(req: Request) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
     
     // Proxy to backend Fastify server
-    const res = await fetch(`${apiUrl}/api/v1/admin/media`, {
+    const endpoint = body.tmdbId ? '/api/v1/admin/media/import-tmdb' : '/api/v1/admin/media';
+    const res = await fetch(`${apiUrl}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
