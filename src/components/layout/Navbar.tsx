@@ -27,26 +27,26 @@ export default function Navbar() {
           {/* Custom Logo applied here without outlines */}
           <img src="/logo.png" alt="Kamunati Logo" className="h-8 md:h-10 object-contain drop-shadow-md" style={{ border: 'none', outline: 'none' }} />
           <nav className="hidden md:flex space-x-6 text-sm text-text/80 font-medium">
-            <a href="#" className="text-text hover:text-white transition">Home</a>
-            <a href="#" className="hover:text-white transition">TV Shows</a>
-            <a href="#" className="hover:text-white transition">Movies</a>
-            <a href="#" className="hover:text-white transition">My List</a>
+            <Link href="/" className="text-text hover:text-white transition">Home</Link>
+            <Link href="/" className="hover:text-white transition">TV Shows</Link>
+            <Link href="/" className="hover:text-white transition">Movies</Link>
+            <Link href="/list" className="hover:text-white transition">My List</Link>
           </nav>
         </div>
         
         <div className="flex items-center space-x-6 text-text">
-          <button className="hover:text-primary transition focus:outline-none">
+          <Link href="/search" className="hover:text-primary transition focus:outline-none">
             <Search size={20} />
-          </button>
+          </Link>
           <Link href="/settings/appearance" className="hover:text-primary transition focus:outline-none hidden sm:block">
             <Palette size={20} />
           </Link>
           <button className="hover:text-primary transition focus:outline-none hidden sm:block">
             <Bell size={20} />
           </button>
-          <div className="flex items-center space-x-2 cursor-pointer hover:text-primary transition bg-white/10 p-1.5 rounded-full">
+          <Link href="/profiles" className="flex items-center space-x-2 cursor-pointer hover:text-primary transition bg-white/10 p-1.5 rounded-full">
             <User size={18} />
-          </div>
+          </Link>
         </div>
       </div>
     </header>

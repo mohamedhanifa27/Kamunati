@@ -8,6 +8,7 @@ import ContinueWatchingRow from '../components/user/ContinueWatchingRow';
 export default function BrowsePage() {
   const [continueWatching, setContinueWatching] = useState<any[]>([]);
   const [mediaList, setMediaList] = useState<any[]>([]);
+  const [myList, setMyList] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProgress = async () => {
@@ -41,8 +42,21 @@ export default function BrowsePage() {
       }
     };
 
+    const fetchMyList = async () => {
+      try {
+        const res = await fetch('/api/user/watchlist');
+        if (res.ok) {
+          const data = await res.json();
+          setMyList(data.map((item: any) => item.media));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchProgress();
     fetchMedia();
+    fetchMyList();
   }, []);
 
   const featuredMedia = mediaList.length > 0 ? {
@@ -60,8 +74,14 @@ export default function BrowsePage() {
   const trendingMovies = mediaList.map((m) => ({
     id: m.id,
     title: m.title,
-    posterUrl: m.posterPath || '/logo.png',
+    posterUrl: m.posterPath || m.backdropPath || '/logo.png',
     qualityBadge: m.infoHash ? 'HD' : undefined
+  }));
+  
+  const myListMapped = myList.map((m) => ({
+    id: m.id,
+    title: m.title,
+    posterUrl: m.posterPath || m.backdropPath || '/logo.png',
   }));
 
   return (
@@ -76,6 +96,10 @@ export default function BrowsePage() {
       <div className="pb-24 -mt-32 relative z-10 space-y-8">
         {continueWatching.length > 0 && (
           <ContinueWatchingRow items={continueWatching} />
+        )}
+        
+        {myListMapped.length > 0 && (
+          <MediaRow title="My List" items={myListMapped} />
         )}
         
         <MediaRow title="Trending Now" items={trendingMovies} />

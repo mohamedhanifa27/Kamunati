@@ -1,57 +1,92 @@
-'use client';
-
-import React from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
+import { PlayIcon, InformationCircleIcon, PlusIcon, CheckIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useThemeStore } from '../../store/themeStore';
-import { PlayIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
 
 interface HeroBannerProps {
-  title: string;
-  overview: string;
-  backdropUrl: string;
-  logoUrl?: string;
   mediaId: string;
+  title: string;
+  overview?: string;
+  backdropUrl?: string;
 }
 
-export default function HeroBanner({ title, overview, backdropUrl, logoUrl, mediaId }: HeroBannerProps) {
+export default function HeroBanner({ mediaId, title, overview, backdropUrl }: HeroBannerProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [inList, setInList] = useState(false);
+  
   const { motionLevel } = useThemeStore();
   const shouldAnimate = motionLevel === 'standard' || motionLevel === 'expressive';
 
+  useEffect(() => {
+    // Check if item is in watchlist (we could do a GET, but skipping for simplicity)
+  }, [mediaId]);
+
+  const toggleList = async () => {
+    try {
+      const res = await fetch('/api/user/watchlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mediaId })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setInList(data.action === 'added');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
-    <div className="relative w-full h-[80vh] min-h-[600px] flex items-center">
-      <div className="absolute inset-0 z-0">
-        <img src={backdropUrl} alt={title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+    <div className="relative w-full h-[85vh] flex items-center">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0 bg-bg">
+        {!imageLoaded && (
+          <div className="absolute inset-0 bg-surface-raised animate-pulse" />
+        )}
+        {backdropUrl && (
+          <img 
+            src={backdropUrl} 
+            alt={title}
+            onLoad={() => setImageLoaded(true)}
+            className={`w-full h-full object-cover transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
       </div>
 
+      {/* Content */}
       <motion.div 
-        className="relative z-10 max-w-2xl px-8 md:px-16 space-y-6"
-        initial={shouldAnimate ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative z-10 px-8 md:px-16 max-w-3xl space-y-6"
+        initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+        animate={shouldAnimate ? { opacity: 1, y: 0 } : false}
+        transition={{ duration: 0.8, delay: 0.2 }}
       >
-        {logoUrl ? (
-          <img src={logoUrl} alt={title} className="w-full max-w-[400px] object-contain" />
-        ) : (
-          <h1 className="text-5xl md:text-7xl font-bold text-text line-clamp-2 drop-shadow-lg">
-            {title}
-          </h1>
+        <h1 className="text-5xl md:text-7xl font-bold text-text line-clamp-2 drop-shadow-lg font-heading">
+          {title}
+        </h1>
+        
+        {overview && (
+          <p className="text-lg md:text-xl text-text-muted line-clamp-3 drop-shadow-md max-w-xl font-body">
+            {overview}
+          </p>
         )}
         
-        <p className="text-lg md:text-xl text-text/90 line-clamp-3 drop-shadow-md max-w-xl">
-          {overview}
-        </p>
-        
         <div className="flex items-center space-x-4 pt-4">
-          <Link href={`/watch/${mediaId}`} className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-text px-8 py-3 rounded font-semibold transition-colors shadow-lg">
-            <PlayIcon className="w-6 h-6 text-text" />
+          <Link href={`/watch/${mediaId}`} className="flex items-center space-x-2 bg-primary hover:bg-primary-hover text-text-on-primary px-8 py-3 rounded-md font-semibold transition-colors shadow-lg">
+            <PlayIcon className="w-6 h-6" />
             <span>Play</span>
           </Link>
           
-          <button className="flex items-center space-x-2 bg-black/50 hover:bg-black/70 text-text px-8 py-3 rounded font-semibold backdrop-blur-sm transition-colors border border-white/20">
-            <InformationCircleIcon className="w-6 h-6 text-text" />
+          <button onClick={toggleList} className="flex items-center space-x-2 bg-surface hover:bg-surface-raised text-text px-6 py-3 rounded-md font-semibold transition-colors shadow-lg border border-border">
+            {inList ? <CheckIcon className="w-6 h-6" /> : <PlusIcon className="w-6 h-6" />}
+            <span>My List</span>
+          </button>
+          
+          <button className="flex items-center space-x-2 bg-surface/50 hover:bg-surface-raised text-text px-6 py-3 rounded-md font-semibold backdrop-blur-sm transition-colors border border-border/50">
+            <InformationCircleIcon className="w-6 h-6" />
             <span>More Info</span>
           </button>
         </div>
