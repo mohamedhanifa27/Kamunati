@@ -41,8 +41,8 @@ interface ThemeStore extends AppearancePrefs {
 
 const defaultPrefs: AppearancePrefs = {
   themeMode: 'preset',
-  presetId: 'midnight-marquee',
-  systemDarkPresetId: 'midnight-marquee',
+  presetId: 'deep-vibe',
+  systemDarkpresetId: 'deep-vibe',
   systemLightPresetId: 'daylight-matinee',
   customThemes: [],
   activeCustomThemeId: null,

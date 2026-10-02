@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 body {
-  background-color: rgb(var(--c-bg));
+  background-color: transparent;
   color: rgb(var(--c-text));
   font-family: var(--font-body);
   overflow-x: hidden;
@@ -18,4 +18,16 @@ body {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.live-gradient {
+  background: linear-gradient(-45deg, #000000, rgb(109, 0, 26), #8A2BE2, #000000);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
 }

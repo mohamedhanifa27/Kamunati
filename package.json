@@ -11,6 +11,7 @@
     "dev": "ts-node --transpile-only src/server.ts"
   },
   "dependencies": {
+    "@designcodeio/threeui": "^1.2.0",
     "@fastify/cors": "^9.0.1",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.9.1",

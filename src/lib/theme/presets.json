@@ -1,5 +1,28 @@
 [
   {
+    "id": "deep-vibe",
+    "name": "Deep Vibe",
+    "mode": "dark",
+    "colors": {
+      "bg": "#000000",
+      "bgElevated": "#0A0A0A",
+      "surface": "#000000",
+      "surfaceRaised": "#111111",
+      "border": "#3B0066",
+      "text": "#FFFFFF",
+      "textMuted": "#A5A3B8",
+      "primary": "#8A2BE2",
+      "primaryHover": "#9D4EDD",
+      "textOnPrimary": "#FFFFFF",
+      "accent": "#6D001A",
+      "success": "#5BD68A",
+      "warning": "#F2C94C",
+      "danger": "#FF6B6B",
+      "info": "#6CB6FF"
+    },
+    "suggested": { "headingFont": "Sora", "bodyFont": "Inter", "radius": "soft" }
+  },
+  {
     "id": "midnight-marquee",
     "name": "Midnight Marquee",
     "mode": "dark",
