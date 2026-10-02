@@ -68,9 +68,18 @@ const defaultPrefs: AppearancePrefs = {
 
 export const useThemeStore = create<ThemeStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...defaultPrefs,
-      setPrefs: (prefs) => set((state) => ({ ...state, ...prefs, updatedAt: new Date().toISOString() })),
+      setPrefs: (prefs) => {
+        set((state) => ({ ...state, ...prefs, updatedAt: new Date().toISOString() }));
+        
+        // Sync to backend asynchronously
+        fetch('/api/user/preferences', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(get())
+        }).catch(err => console.error('Failed to sync preferences:', err));
+      },
     }),
     {
       name: 'kamunati-appearance',

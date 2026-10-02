@@ -19,6 +19,7 @@ model User {
   updatedAt      DateTime       @updatedAt
   watchProgress  WatchProgress[]
   watchlists     Watchlist[]
+  ratings        Rating[]
 }
 
 model Media {
@@ -47,6 +48,7 @@ model Media {
   torrents       TorrentSource[]
   watchProgress  WatchProgress[]
   watchlists     Watchlist[]
+  ratings        Rating[]
 }
 
 model Season {
@@ -124,6 +126,19 @@ model Watchlist {
   mediaId        String
   media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
   addedAt        DateTime       @default(now())
+
+  @@unique([userId, mediaId])
+}
+
+model Rating {
+  id             String         @id @default(uuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaId        String
+  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  score          Int            // e.g., 1 to 5
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@unique([userId, mediaId])
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlayIcon, InformationCircleIcon, PlusIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, InformationCircleIcon, PlusIcon, CheckIcon, StarIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useThemeStore } from '../../store/themeStore';
@@ -14,13 +14,37 @@ interface HeroBannerProps {
 export default function HeroBanner({ mediaId, title, overview, backdropUrl }: HeroBannerProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [inList, setInList] = useState(false);
+  const [rating, setRating] = useState<number | null>(null);
   
   const { motionLevel } = useThemeStore();
   const shouldAnimate = motionLevel === 'standard' || motionLevel === 'expressive';
 
   useEffect(() => {
     // Check if item is in watchlist (we could do a GET, but skipping for simplicity)
+    const fetchRating = async () => {
+      try {
+        const res = await fetch(`/api/user/rating?mediaId=${mediaId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setRating(data.score);
+        }
+      } catch (e) {}
+    };
+    fetchRating();
   }, [mediaId]);
+
+  const handleRate = async (score: number) => {
+    try {
+      setRating(score);
+      await fetch('/api/user/rating', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mediaId, score })
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const toggleList = async () => {
     try {
@@ -89,6 +113,18 @@ export default function HeroBanner({ mediaId, title, overview, backdropUrl }: He
             <InformationCircleIcon className="w-6 h-6" />
             <span>More Info</span>
           </button>
+          
+          <div className="flex items-center space-x-1 pl-4">
+            {[1, 2, 3, 4, 5].map(star => (
+              <button 
+                key={star} 
+                onClick={() => handleRate(star)}
+                className="focus:outline-none"
+              >
+                <StarIcon className={`w-8 h-8 transition-colors ${rating && rating >= star ? 'text-warning' : 'text-text-muted hover:text-warning/70'}`} />
+              </button>
+            ))}
+          </div>
         </div>
       </motion.div>
     </div>
