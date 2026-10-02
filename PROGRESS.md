@@ -1,8 +1,8 @@
 # PROGRESS
 
 ## Current Phase and Step
-- **Phase 11: Performance, caching and resilience** - COMPLETED
-- Ready for Phase 12 (Testing)
+- **Phase 12: Testing** - COMPLETED
+- Ready for Phase 13/14 (Documentation and final audit)
 
 ## Completed phases
 - Phase 1: Project bootstrap and repo structure (Adopted existing monorepo)
@@ -12,6 +12,7 @@
 - Phase 5-9: Backend/Streaming engine (Done previously)
 - Phase 10: Preferences sync, search, ratings (2026-10-02)
 - Phase 11: Performance, caching and resilience (2026-10-02)
+- Phase 12: Testing (2026-10-02)
 
 ## Decisions made
 - We are keeping Next.js 15 instead of migrating to Vite (as approved via Prompt 0B).
