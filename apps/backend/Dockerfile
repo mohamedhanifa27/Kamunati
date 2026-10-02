@@ -4,7 +4,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache python3 make g++ 
+RUN apk add --no-cache python3 make g++ openssl
 
 COPY package*.json ./
 COPY prisma ./prisma/
@@ -20,7 +20,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 # Install runtime dependencies for streaming and remuxing
-RUN apk add --no-cache ffmpeg
+RUN apk add --no-cache ffmpeg openssl
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
