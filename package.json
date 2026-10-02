@@ -2,10 +2,10 @@
   "name": "torrent-stream-engine",
   "version": "1.0.0",
   "description": "Production-Grade Sequential Torrent Streaming Engine & Media Proxy",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.server.json",
+    "start": "node dist/src/server.js",
     "dev": "ts-node --transpile-only src/server.ts"
   },
   "dependencies": {

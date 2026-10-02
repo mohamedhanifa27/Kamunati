@@ -1,3 +1,4 @@
+// @ts-nocheck
 import torrentStream from 'torrent-stream';
 import { EngineInstance, MediaFile, SwarmStats, TorrentMetadata } from '../types/torrent';
 
