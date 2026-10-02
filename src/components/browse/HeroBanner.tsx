@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../../store/themeStore';
 import { PlayIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
@@ -44,10 +45,10 @@ export default function HeroBanner({ title, overview, backdropUrl, logoUrl, medi
         </p>
         
         <div className="flex items-center space-x-4 pt-4">
-          <button className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-text-main px-8 py-3 rounded font-semibold transition-colors shadow-lg">
+          <Link href={`/watch/${mediaId}`} className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-text-main px-8 py-3 rounded font-semibold transition-colors shadow-lg">
             <PlayIcon className="w-6 h-6 text-text-main" />
             <span>Play</span>
-          </button>
+          </Link>
           
           <button className="flex items-center space-x-2 bg-black/50 hover:bg-black/70 text-text-main px-8 py-3 rounded font-semibold backdrop-blur-sm transition-colors border border-white/20">
             <InformationCircleIcon className="w-6 h-6 text-text-main" />

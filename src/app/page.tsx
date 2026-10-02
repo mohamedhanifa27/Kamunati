@@ -7,21 +7,20 @@ import ContinueWatchingRow from '../components/user/ContinueWatchingRow';
 
 export default function BrowsePage() {
   const [continueWatching, setContinueWatching] = useState<any[]>([]);
+  const [mediaList, setMediaList] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch mock data or real data
     const fetchProgress = async () => {
       try {
         const res = await fetch('/api/user/progress');
         if (res.ok) {
           const data = await res.json();
-          // Map backend data to UI
           setContinueWatching(data.map((item: any) => ({
             id: item.id,
             mediaId: item.mediaId,
             title: item.media.title,
             posterUrl: item.media.backdropPath || item.media.posterPath,
-            progressPercent: (item.timestampSec / 120) * 100, // mock duration 120s
+            progressPercent: (item.timestampSec / 120) * 100, 
             timestampSec: item.timestampSec,
           })));
         }
@@ -29,24 +28,41 @@ export default function BrowsePage() {
         console.error(err);
       }
     };
+    
+    const fetchMedia = async () => {
+      try {
+        const res = await fetch('/api/media');
+        if (res.ok) {
+          const data = await res.json();
+          setMediaList(data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchProgress();
+    fetchMedia();
   }, []);
 
-  // Mock featured data for now until API integration is complete
-  const featuredMedia = {
+  const featuredMedia = mediaList.length > 0 ? {
+    mediaId: mediaList[0].id,
+    title: mediaList[0].title,
+    overview: mediaList[0].overview,
+    backdropUrl: mediaList[0].backdropPath || mediaList[0].posterPath || '/logo.png',
+  } : {
     mediaId: '1',
-    title: 'Inception',
-    overview: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
-    backdropUrl: 'https://image.tmdb.org/t/p/original/8ZTVqvKdQ8emSGUEMjsS4yHAwrp.jpg',
+    title: 'Welcome to Kamunati',
+    overview: 'No media available. Go to the Admin Dashboard to add movies or TV shows.',
+    backdropUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop',
   };
 
-  const trendingMovies = [
-    { id: '1', title: 'Inception', posterUrl: 'https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg', qualityBadge: '4K' },
-    { id: '2', title: 'Interstellar', posterUrl: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', qualityBadge: '1080p' },
-    { id: '3', title: 'The Dark Knight', posterUrl: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', qualityBadge: '4K' },
-    { id: '4', title: 'Avatar', posterUrl: 'https://image.tmdb.org/t/p/w500/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg' },
-    { id: '5', title: 'The Matrix', posterUrl: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg', qualityBadge: '1080p' },
-  ];
+  const trendingMovies = mediaList.map((m) => ({
+    id: m.id,
+    title: m.title,
+    posterUrl: m.posterPath || '/logo.png',
+    qualityBadge: m.infoHash ? 'HD' : undefined
+  }));
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden pt-0">

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../../store/themeStore';
 
@@ -17,11 +18,12 @@ export default function MediaCard({ id, title, posterUrl, qualityBadge }: MediaC
   const shouldAnimate = animationLevel === 'high';
 
   return (
-    <motion.div 
-      className="relative w-32 md:w-48 lg:w-56 aspect-[2/3] rounded-md overflow-hidden cursor-pointer bg-neutral-900 group"
-      whileHover={shouldAnimate ? { scale: 1.05, zIndex: 30 } : {}}
-      transition={{ duration: 0.2 }}
-    >
+    <Link href={`/watch/${id}`}>
+      <motion.div 
+        className="relative w-32 md:w-48 lg:w-56 aspect-[2/3] rounded-md overflow-hidden cursor-pointer bg-neutral-900 group"
+        whileHover={shouldAnimate ? { scale: 1.05, zIndex: 30 } : {}}
+        transition={{ duration: 0.2 }}
+      >
       {!imageLoaded && (
         <div className="absolute inset-0 bg-neutral-800 animate-pulse" />
       )}
@@ -43,7 +45,8 @@ export default function MediaCard({ id, title, posterUrl, qualityBadge }: MediaC
         <h3 className="text-text-main text-sm md:text-base font-semibold line-clamp-2">
           {title}
         </h3>
-      </div>
-    </motion.div>
+        </div>
+      </motion.div>
+    </Link>
   );
 }

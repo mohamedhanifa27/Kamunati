@@ -10,9 +10,10 @@ interface VideoPlayerProps {
   src: string;
   infoHash?: string;
   mediaId: string;
+  title?: string;
 }
 
-export default function VideoPlayer({ src, infoHash, mediaId }: VideoPlayerProps) {
+export default function VideoPlayer({ src, infoHash, mediaId, title }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   
