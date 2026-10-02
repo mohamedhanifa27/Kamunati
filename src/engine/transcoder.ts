@@ -13,7 +13,7 @@ export function streamTranscoded(inputStream: NodeJS.ReadableStream, reply: Fast
   reply.header('Transfer-Encoding', 'chunked');
 
   const command = ffmpeg()
-    .input(inputStream)
+    .input(inputStream as any)
     .videoCodec('copy') // Try to copy video stream
     .audioCodec('aac')
     .audioBitrate('192k')
@@ -36,6 +36,6 @@ export function streamTranscoded(inputStream: NodeJS.ReadableStream, reply: Fast
 
   reply.raw.on('close', () => {
     command.kill('SIGKILL');
-    inputStream.destroy();
+    (inputStream as any).destroy();
   });
 }

@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, Link as LinkIcon, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { UploadCloud, Link as LinkIcon, Loader2, CheckCircle, AlertCircle, Search } from 'lucide-react';
 
 export interface TorrentMetadata {
   infoHash: string;

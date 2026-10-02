@@ -5,10 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
-import TMDBImportModal from '../../../components/admin/TMDBImportModal';
-import TorrentUploader, { TorrentMetadata } from '../../../components/admin/TorrentUploader';
-import FileIndexSelector from '../../../components/admin/FileIndexSelector';
-import MediaEditor from '../../../components/admin/MediaEditor';
+import TMDBImportModal from '../../../../components/admin/TMDBImportModal';
+import TorrentUploader, { TorrentMetadata } from '../../../../components/admin/TorrentUploader';
+import FileIndexSelector from '../../../../components/admin/FileIndexSelector';
+import MediaEditor from '../../../../components/admin/MediaEditor';
 
 export default function EditMediaPage() {
   const { id } = useParams() as { id: string };
@@ -113,7 +113,7 @@ export default function EditMediaPage() {
           </div>
 
           <TorrentUploader 
-            onParsed={(data) => {
+            onParsed={(data: TorrentMetadata) => {
               setParsedTorrent(data);
               setSelectedFileIndex(null); // Reset selection on new parse
             }} 
