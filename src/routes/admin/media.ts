@@ -20,7 +20,7 @@ export default async function adminMediaRoutes(fastify: FastifyInstance) {
     try {
       const tmdbData = await fetchDetails(tmdbId, type);
       
-      const media = await prisma.$transaction(async (tx) => {
+      const media = await prisma.$transaction(async (tx: any) => {
         let releaseYear = null;
         const dateStr = tmdbData.release_date || tmdbData.first_air_date;
         if (dateStr) {

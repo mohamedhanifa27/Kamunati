@@ -12,8 +12,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Ensure standalone output is enabled in next.config.js for this to work
-RUN npm run build
+RUN npx prisma generate
+RUN npx next build
 
 # Stage 3: Runner
 FROM node:20-alpine AS runner
