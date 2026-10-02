@@ -26,7 +26,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
-COPY entrypoint.sh ./
+COPY apps/backend/entrypoint.sh ./entrypoint.sh
 
 # Make entrypoint executable
 RUN chmod +x ./entrypoint.sh
