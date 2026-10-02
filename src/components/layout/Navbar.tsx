@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import { Search, Bell, User, Palette } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,23 +21,26 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className={`fixed top-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-background' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
+    <header className={`fixed top-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-bg' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
       <div className="flex items-center justify-between px-8 md:px-16 py-4">
         <div className="flex items-center space-x-8">
           {/* Custom Logo applied here without outlines */}
           <img src="/logo.png" alt="Kamunati Logo" className="h-8 md:h-10 object-contain drop-shadow-md" style={{ border: 'none', outline: 'none' }} />
-          <nav className="hidden md:flex space-x-6 text-sm text-text-main/80 font-medium">
-            <a href="#" className="text-text-main hover:text-white transition">Home</a>
+          <nav className="hidden md:flex space-x-6 text-sm text-text/80 font-medium">
+            <a href="#" className="text-text hover:text-white transition">Home</a>
             <a href="#" className="hover:text-white transition">TV Shows</a>
             <a href="#" className="hover:text-white transition">Movies</a>
             <a href="#" className="hover:text-white transition">My List</a>
           </nav>
         </div>
         
-        <div className="flex items-center space-x-6 text-text-main">
+        <div className="flex items-center space-x-6 text-text">
           <button className="hover:text-primary transition focus:outline-none">
             <Search size={20} />
           </button>
+          <Link href="/settings/appearance" className="hover:text-primary transition focus:outline-none hidden sm:block">
+            <Palette size={20} />
+          </Link>
           <button className="hover:text-primary transition focus:outline-none hidden sm:block">
             <Bell size={20} />
           </button>

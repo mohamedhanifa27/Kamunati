@@ -29,7 +29,7 @@ export default function MediaRow({ title, items }: MediaRowProps) {
 
   return (
     <div className="relative w-full py-6 group">
-      <h2 className="text-2xl font-bold text-text-main px-8 md:px-16 mb-4">{title}</h2>
+      <h2 className="text-2xl font-bold text-text px-8 md:px-16 mb-4">{title}</h2>
       
       <div className="relative">
         <button 

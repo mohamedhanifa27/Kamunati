@@ -123,7 +123,7 @@ export default function P2PScrubber({ currentTime, duration, p2pPieces, browserB
       {/* Hover Tooltip */}
       {hoverPosition && duration > 0 && (
         <div 
-          className="absolute bottom-6 bg-background/90 text-white text-xs font-semibold px-2 py-1 rounded shadow pointer-events-none whitespace-nowrap border border-white/10"
+          className="absolute bottom-6 bg-bg/90 text-white text-xs font-semibold px-2 py-1 rounded shadow pointer-events-none whitespace-nowrap border border-white/10"
           style={{ left: hoverPosition.x, transform: 'translateX(-50%)' }}
         >
           {formatTime(hoverPosition.time)}

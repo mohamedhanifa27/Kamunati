@@ -15,8 +15,8 @@ interface HeroBannerProps {
 }
 
 export default function HeroBanner({ title, overview, backdropUrl, logoUrl, mediaId }: HeroBannerProps) {
-  const { animationLevel } = useThemeStore();
-  const shouldAnimate = animationLevel === 'high';
+  const { motionLevel } = useThemeStore();
+  const shouldAnimate = motionLevel === 'standard' || motionLevel === 'expressive';
 
   return (
     <div className="relative w-full h-[80vh] min-h-[600px] flex items-center">
@@ -35,23 +35,23 @@ export default function HeroBanner({ title, overview, backdropUrl, logoUrl, medi
         {logoUrl ? (
           <img src={logoUrl} alt={title} className="w-full max-w-[400px] object-contain" />
         ) : (
-          <h1 className="text-5xl md:text-7xl font-bold text-text-main line-clamp-2 drop-shadow-lg">
+          <h1 className="text-5xl md:text-7xl font-bold text-text line-clamp-2 drop-shadow-lg">
             {title}
           </h1>
         )}
         
-        <p className="text-lg md:text-xl text-text-main/90 line-clamp-3 drop-shadow-md max-w-xl">
+        <p className="text-lg md:text-xl text-text/90 line-clamp-3 drop-shadow-md max-w-xl">
           {overview}
         </p>
         
         <div className="flex items-center space-x-4 pt-4">
-          <Link href={`/watch/${mediaId}`} className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-text-main px-8 py-3 rounded font-semibold transition-colors shadow-lg">
-            <PlayIcon className="w-6 h-6 text-text-main" />
+          <Link href={`/watch/${mediaId}`} className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-text px-8 py-3 rounded font-semibold transition-colors shadow-lg">
+            <PlayIcon className="w-6 h-6 text-text" />
             <span>Play</span>
           </Link>
           
-          <button className="flex items-center space-x-2 bg-black/50 hover:bg-black/70 text-text-main px-8 py-3 rounded font-semibold backdrop-blur-sm transition-colors border border-white/20">
-            <InformationCircleIcon className="w-6 h-6 text-text-main" />
+          <button className="flex items-center space-x-2 bg-black/50 hover:bg-black/70 text-text px-8 py-3 rounded font-semibold backdrop-blur-sm transition-colors border border-white/20">
+            <InformationCircleIcon className="w-6 h-6 text-text" />
             <span>More Info</span>
           </button>
         </div>

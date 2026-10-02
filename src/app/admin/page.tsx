@@ -7,7 +7,8 @@ const prisma = new PrismaClient();
 
 export default async function AdminDashboardPage() {
   const mediaList = await prisma.media.findMany({
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    include: { torrents: true }
   });
 
   return (
@@ -62,7 +63,7 @@ export default async function AdminDashboardPage() {
                   <span className="bg-white/10 px-2 py-1 rounded text-xs tracking-wide uppercase">{media.type}</span>
                 </td>
                 <td className="px-6 py-4">
-                  {media.infoHash ? (
+                  {media.torrents && media.torrents.length > 0 ? (
                     <span className="text-green-400 flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-400" /> Linked</span>
                   ) : (
                     <span className="text-yellow-400 flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-yellow-400" /> Pending Torrent</span>

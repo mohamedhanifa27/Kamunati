@@ -1,0 +1,44 @@
+:root {
+  /* Default Theme (Midnight Marquee as RGB space-separated) */
+  --c-bg: 14 16 32;
+  --c-bg-elevated: 20 23 48;
+  --c-surface: 23 26 46;
+  --c-surface-raised: 32 36 61;
+  --c-border: 44 49 80;
+  --c-text: 236 234 244;
+  --c-text-muted: 165 163 184;
+  --c-primary: 242 163 58;
+  --c-primary-hover: 247 180 90;
+  --c-text-on-primary: 26 18 4;
+  --c-accent: 92 200 192;
+  --c-success: 91 214 138;
+  --c-warning: 242 201 76;
+  --c-danger: 255 107 107;
+  --c-info: 108 182 255;
+  --c-overlay: 0 0 0;
+
+  /* Typography */
+  --font-heading: 'Sora', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --fs-scale: 1;
+  
+  /* Shapes */
+  --radius-base: 0.5rem;
+  --radius-sm: calc(var(--radius-base) * 0.5);
+  --radius-md: var(--radius-base);
+  --radius-lg: calc(var(--radius-base) * 1.5);
+  --radius-xl: calc(var(--radius-base) * 2);
+  --radius-pill: 9999px;
+
+  /* Motion */
+  --motion-speed: 1;
+  --dur-instant: calc(80ms * var(--motion-speed));
+  --dur-fast: calc(150ms * var(--motion-speed));
+  --dur-base: calc(250ms * var(--motion-speed));
+  --dur-slow: calc(450ms * var(--motion-speed));
+  --dur-cinematic: calc(900ms * var(--motion-speed));
+}
+
+[data-radius="sharp"] { --radius-base: 0rem; }
+[data-radius="soft"] { --radius-base: 0.375rem; }
+[data-radius="round"] { --radius-base: 1rem; }

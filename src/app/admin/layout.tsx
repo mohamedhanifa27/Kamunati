@@ -16,11 +16,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [router]);
 
   if (!isAuthorized) {
-    return <div className="min-h-screen bg-background flex items-center justify-center text-white">Authenticating...</div>;
+    return <div className="min-h-screen bg-bg flex items-center justify-center text-white">Authenticating...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-background text-text-main flex">
+    <div className="min-h-screen bg-bg text-text flex">
       {/* Sidebar */}
       <aside className="w-64 bg-black border-r border-white/10 flex flex-col z-20">
         <div className="h-16 flex items-center px-6 border-b border-white/10">

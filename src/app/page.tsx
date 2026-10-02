@@ -65,7 +65,7 @@ export default function BrowsePage() {
   }));
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden pt-0">
+    <div className="min-h-screen bg-bg overflow-x-hidden pt-0">
       <HeroBanner 
         mediaId={featuredMedia.mediaId}
         title={featuredMedia.title}

@@ -1,19 +1,15 @@
+@import '../styles/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-primary: #837D5E;
-  --color-background: #000000;
-  --color-surface: #000000;
-  --color-text: #FFFFFF;
-  --font-main: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-}
-
 body {
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background-color: rgb(var(--c-bg));
+  color: rgb(var(--c-text));
+  font-family: var(--font-body);
   overflow-x: hidden;
+  font-size: calc(1rem * var(--fs-scale));
 }
 
 .hide-scrollbar::-webkit-scrollbar {
