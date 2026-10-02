@@ -5,6 +5,14 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
+import dynamic from 'next/dynamic';
+
+const PredictiveArcCanvas = dynamic(
+  () => import('../../shaders/predictive-arc/PredictiveArcCanvas').then(mod => mod.PredictiveArcCanvas), 
+  { ssr: false }
+);
+import '../../shaders/threeui.css';
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -41,11 +49,20 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
-      {/* Cinematic Background Gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-black to-black opacity-80 pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ fontFamily: "'Montserrat Alternates', sans-serif" }}>
+      {/* ThreeUI Predictive Arc Background */}
+      <div className="absolute inset-0 z-0 bg-[#040607]">
+        <PredictiveArcCanvas
+          variant="predictive"
+          mode="dark"
+          speed={1.00}
+          hue={280} // Matches Velvet/Hyper Magenta vibe
+          saturation={1.00}
+          brightness={1.00}
+        />
+      </div>
 
-      <div className="z-10 w-full max-w-md p-8 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
+      <div className="z-10 w-full max-w-md p-8 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl relative">
         <div className="flex justify-center mb-8">
           <img src="/logo.png" alt="Kamunati" className="h-12 object-contain" />
         </div>
@@ -86,7 +103,7 @@ function LoginForm() {
           <button 
             type="submit" 
             disabled={isLoading}
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 rounded-lg transition-all active:scale-[0.98] flex items-center justify-center disabled:opacity-70 mt-4"
+            className="w-full bg-[#BF40FA] hover:bg-[#D685FF] text-white font-bold py-3.5 rounded-lg transition-all active:scale-[0.98] flex items-center justify-center disabled:opacity-70 mt-4 shadow-lg shadow-[#BF40FA]/20"
           >
             {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Sign In'}
           </button>
