@@ -38,9 +38,22 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     }
     styleEl.textContent = `:root { ${cssVars} }`;
 
-    // Apply Typography
-    root.style.setProperty('--font-heading', `"${prefs.headingFont}", sans-serif`);
-    root.style.setProperty('--font-body', `"${prefs.bodyFont}", sans-serif`);
+    // Apply Typography mapping for next/font variables
+    const fontMap: Record<string, string> = {
+      'Inter': 'var(--font-inter)',
+      'Sora': 'var(--font-sora)',
+      'Outfit': 'var(--font-outfit)',
+      'Bricolage Grotesque': 'var(--font-bricolage)',
+      'Playfair Display': 'var(--font-playfair)',
+      'DM Sans': 'var(--font-dmsans)',
+      'JetBrains Mono': 'var(--font-jetbrains)'
+    };
+
+    const mappedHeading = fontMap[prefs.headingFont] || `"${prefs.headingFont}", sans-serif`;
+    const mappedBody = fontMap[prefs.bodyFont] || `"${prefs.bodyFont}", sans-serif`;
+
+    root.style.setProperty('--font-heading', mappedHeading);
+    root.style.setProperty('--font-body', mappedBody);
     root.style.setProperty('--fs-scale', prefs.fontScale.toString());
 
     // Apply layout & shape data attributes

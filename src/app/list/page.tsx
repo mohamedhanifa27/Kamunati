@@ -1,36 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import MediaCard from '../../components/browse/MediaCard';
 
-export default function MyListPage() {
-  const [list, setList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-  useEffect(() => {
-    async function fetchList() {
-      try {
-        const res = await fetch('/api/user/watchlist');
-        if (res.ok) {
-          const data = await res.json();
-          // data is an array of { id, userId, mediaId, media: {...} }
-          setList(data.map((item: any) => item.media));
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchList();
-  }, []);
+export default function MyListPage() {
+  const { data: watchlistData, error, isLoading } = useSWR('/api/user/watchlist', fetcher);
+
+  const list = watchlistData?.map((item: any) => item.media) || [];
 
   return (
     <div className="min-h-screen bg-bg pt-32 px-8 md:px-16 text-text">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-heading font-bold mb-12">My List</h1>
 
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
@@ -41,7 +27,7 @@ export default function MyListPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {list.map((media) => (
+            {list.map((media: any) => (
               <MediaCard 
                 key={media.id} 
                 id={media.id} 

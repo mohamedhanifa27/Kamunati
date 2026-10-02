@@ -1,65 +1,36 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import HeroBanner from '../components/browse/HeroBanner';
 import MediaRow from '../components/browse/MediaRow';
 import ContinueWatchingRow from '../components/user/ContinueWatchingRow';
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function BrowsePage() {
-  const [continueWatching, setContinueWatching] = useState<any[]>([]);
-  const [mediaList, setMediaList] = useState<any[]>([]);
-  const [myList, setMyList] = useState<any[]>([]);
+  const { data: mediaList, error: mediaError } = useSWR('/api/media', fetcher);
+  const { data: progressData } = useSWR('/api/user/progress', fetcher);
+  const { data: watchlistData } = useSWR('/api/user/watchlist', fetcher);
 
-  useEffect(() => {
-    const fetchProgress = async () => {
-      try {
-        const res = await fetch('/api/user/progress');
-        if (res.ok) {
-          const data = await res.json();
-          setContinueWatching(data.map((item: any) => ({
-            id: item.id,
-            mediaId: item.mediaId,
-            title: item.media.title,
-            posterUrl: item.media.backdropPath || item.media.posterPath,
-            progressPercent: (item.timestampSec / 120) * 100, 
-            timestampSec: item.timestampSec,
-          })));
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    
-    const fetchMedia = async () => {
-      try {
-        const res = await fetch('/api/media');
-        if (res.ok) {
-          const data = await res.json();
-          setMediaList(data);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  const isLoading = !mediaList;
 
-    const fetchMyList = async () => {
-      try {
-        const res = await fetch('/api/user/watchlist');
-        if (res.ok) {
-          const data = await res.json();
-          setMyList(data.map((item: any) => item.media));
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  const continueWatching = progressData?.map((item: any) => ({
+    id: item.id,
+    mediaId: item.mediaId,
+    title: item.media.title,
+    posterUrl: item.media.backdropPath || item.media.posterPath,
+    progressPercent: (item.timestampSec / 120) * 100, 
+    timestampSec: item.timestampSec,
+  })) || [];
 
-    fetchProgress();
-    fetchMedia();
-    fetchMyList();
-  }, []);
+  const myListMapped = watchlistData?.map((item: any) => ({
+    id: item.media.id,
+    title: item.media.title,
+    posterUrl: item.media.posterPath || item.media.backdropPath || '/logo.png',
+  })) || [];
 
-  const featuredMedia = mediaList.length > 0 ? {
+  const featuredMedia = mediaList?.length > 0 ? {
     mediaId: mediaList[0].id,
     title: mediaList[0].title,
     overview: mediaList[0].overview,
@@ -71,18 +42,16 @@ export default function BrowsePage() {
     backdropUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop',
   };
 
-  const trendingMovies = mediaList.map((m) => ({
+  const trendingMovies = mediaList?.map((m: any) => ({
     id: m.id,
     title: m.title,
     posterUrl: m.posterPath || m.backdropPath || '/logo.png',
     qualityBadge: m.infoHash ? 'HD' : undefined
-  }));
-  
-  const myListMapped = myList.map((m) => ({
-    id: m.id,
-    title: m.title,
-    posterUrl: m.posterPath || m.backdropPath || '/logo.png',
-  }));
+  })) || [];
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-bg animate-pulse flex items-center justify-center text-text-muted">Loading Home...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-bg overflow-x-hidden pt-0">
