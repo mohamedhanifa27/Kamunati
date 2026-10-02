@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Enums removed because SQLite does not support them. We will use String instead.
+
+model User {
+  id             String         @id @default(uuid())
+  email          String         @unique
+  passwordHash   String
+  role           String         @default("USER") // sqlite workaround for enums: use string or just stick to string if prisma warns. Using String for broader compatibility.
+  preferences    String?        // JSON string for sqlite
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  watchProgress  WatchProgress[]
+  watchlists     Watchlist[]
+}
+
+model Media {
+  id             String         @id @default(uuid())
+  tmdbId         Int?           @unique
+  imdbId         String?
+  title          String
+  originalTitle  String?
+  type           String         // MOVIE or SERIES
+  slug           String         @unique
+  overview       String?
+  tagline        String?
+  posterPath     String?
+  backdropPath   String?
+  releaseYear    Int?
+  runtime        Int?
+  rating         Float?
+  voteCount      Int?
+  genres         String         // JSON array for sqlite
+  isPublished    Boolean        @default(false)
+  isFeatured     Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  seasons        Season[]
+  torrents       TorrentSource[]
+  watchProgress  WatchProgress[]
+  watchlists     Watchlist[]
+}
+
+model Season {
+  id             String         @id @default(uuid())
+  mediaId        String
+  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  seasonNumber   Int
+  name           String?
+  overview       String?
+  posterPath     String?
+  airDate        DateTime?
+  
+  episodes       Episode[]
+  
+  @@unique([mediaId, seasonNumber])
+}
+
+model Episode {
+  id             String         @id @default(uuid())
+  seasonId       String
+  season         Season         @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeNumber  Int
+  title          String?
+  overview       String?
+  stillPath      String?
+  airDate        DateTime?
+  duration       Int?
+
+  torrents       TorrentSource[]
+  watchProgress  WatchProgress[]
+
+  @@unique([seasonId, episodeNumber])
+}
+
+model TorrentSource {
+  id             String         @id @default(uuid())
+  mediaId        String?
+  media          Media?         @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  episodeId      String?
+  episode        Episode?       @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  title          String
+  magnetUri      String
+  infoHash       String
+  fileIndex      Int
+  resolution     String         // RES_4K, etc
+  codec          String?
+  container      String?
+  sizeInBytes    BigInt?
+  seeders        Int            @default(0)
+  leechers       Int            @default(0)
+  lastCheckedAt  DateTime?
+
+  @@index([infoHash])
+}
+
+model WatchProgress {
+  id             String         @id @default(uuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaId        String
+  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  episodeId      String?
+  episode        Episode?       @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  timestampSec   Int            @default(0)
+  isCompleted    Boolean        @default(false)
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([userId, mediaId, episodeId])
+}
+
+model Watchlist {
+  id             String         @id @default(uuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaId        String
+  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  addedAt        DateTime       @default(now())
+
+  @@unique([userId, mediaId])
+}

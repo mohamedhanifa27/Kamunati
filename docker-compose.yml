@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kamunati}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kamunati_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-kamunati}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kamunati} -d ${POSTGRES_DB:-kamunati}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+  cache:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_network
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kamunati}:${POSTGRES_PASSWORD:-kamunati_secret}@database:5432/${POSTGRES_DB:-kamunati}?schema=public
+      REDIS_URL: redis://cache:6379
+      PORT: 3001
+      NODE_ENV: production
+      TORRENT_CACHE_DIR: /tmp/torrents
+    ports:
+      - "3001:3001"
+    volumes:
+      - torrent_cache:/tmp/torrents
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    networks:
+      - app_network
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3001
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+volumes:
+  pg_data:
+  redis_data:
+  torrent_cache:
+
+networks:
+  app_network:
+    driver: bridge
