@@ -11,7 +11,7 @@
 | C Navigation | `feat/c-navigation` | ✅ Complete | Centered pill, Settings bottom nav |
 | E Profile | `feat/e-profile` | ✅ Complete | Single profile dashboard, APIs |
 | D Settings | feat/d-settings | Complete | UI and API routes |
-| F Search Card | — | ⏳ Pending | |
+| F Search Card | feat/f-search-card | Complete | Overlay card, API integration |
 | G Reviews | — | ⏳ Pending | |
 | H Admin Upgrades | — | ⏳ Pending | |
 
