@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../../auth';
 import { PrismaClient } from '@prisma/client';
@@ -23,3 +24,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to sync preferences' }, { status: 500 });
   }
 }
+

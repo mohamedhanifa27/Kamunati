@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../../auth';
 import { PrismaClient } from '@prisma/client';
@@ -57,3 +58,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Failed to fetch watchlist' }, { status: 500 });
   }
 }
+
