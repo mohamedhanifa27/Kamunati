@@ -15,39 +15,43 @@ export default function BrowsePage() {
 
   const isLoading = !mediaList;
 
-  const continueWatching = progressData?.map((item: any) => ({
+  const safeProgressData = Array.isArray(progressData) ? progressData : [];
+  const continueWatching = safeProgressData.map((item: any) => ({
     id: item.id,
     mediaId: item.mediaId,
     title: item.media.title,
     posterUrl: item.media.backdropPath || item.media.posterPath,
     progressPercent: (item.timestampSec / 120) * 100, 
     timestampSec: item.timestampSec,
-  })) || [];
+  }));
 
-  const myListMapped = watchlistData?.map((item: any) => ({
+  const safeWatchlistData = Array.isArray(watchlistData) ? watchlistData : [];
+  const myListMapped = safeWatchlistData.map((item: any) => ({
     id: item.media.id,
     title: item.media.title,
     posterUrl: item.media.posterPath || item.media.backdropPath || '/logo.png',
-  })) || [];
+  }));
 
-  const featuredMedia = mediaList?.length > 0 ? {
-    mediaId: mediaList[0].id,
-    title: mediaList[0].title,
-    overview: mediaList[0].overview,
-    backdropUrl: mediaList[0].backdropPath || mediaList[0].posterPath || '/logo.png',
+  const safeMediaList = Array.isArray(mediaList) ? mediaList : [];
+  
+  const trendingMovies = safeMediaList.map((m: any) => ({
+    id: m.id,
+    title: m.title,
+    posterUrl: m.posterPath || m.backdropPath || '/logo.png',
+    qualityBadge: m.infoHash ? 'HD' : undefined
+  }));
+
+  const featuredMedia = safeMediaList.length > 0 ? {
+    mediaId: safeMediaList[0].id,
+    title: safeMediaList[0].title,
+    overview: safeMediaList[0].overview,
+    backdropUrl: safeMediaList[0].backdropPath || safeMediaList[0].posterPath || '/logo.png',
   } : {
     mediaId: '1',
     title: 'Welcome to Kamunati',
     overview: 'No media available. Go to the Admin Dashboard to add movies or TV shows.',
     backdropUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop',
   };
-
-  const trendingMovies = mediaList?.map((m: any) => ({
-    id: m.id,
-    title: m.title,
-    posterUrl: m.posterPath || m.backdropPath || '/logo.png',
-    qualityBadge: m.infoHash ? 'HD' : undefined
-  })) || [];
 
   if (isLoading) {
     return <div className="min-h-screen bg-bg animate-pulse flex items-center justify-center text-text-muted">Loading Home...</div>;

@@ -14,6 +14,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN npx prisma generate
+RUN npx prisma db push
 RUN npx next build
 
 # Stage 3: Runner
@@ -26,7 +27,11 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN apk add --no-cache openssl
 
+# Install prisma CLI so we can push the schema at runtime
+RUN npm install -g prisma
+
 COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
@@ -39,4 +44,4 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node server.js"]

@@ -9,7 +9,8 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 export default function MyListPage() {
   const { data: watchlistData, error, isLoading } = useSWR('/api/user/watchlist', fetcher);
 
-  const list = watchlistData?.map((item: any) => item.media) || [];
+  const safeWatchlistData = Array.isArray(watchlistData) ? watchlistData : [];
+  const list = safeWatchlistData.map((item: any) => item.media);
 
   return (
     <div className="min-h-screen bg-bg pt-32 px-8 md:px-16 text-text">
