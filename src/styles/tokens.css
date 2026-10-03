@@ -30,6 +30,20 @@
   --radius-xl: calc(var(--radius-base) * 2);
   --radius-pill: 9999px;
 
+  /* Z-index layering (Workstream A) */
+  --z-ambient: -1;
+  --z-content: 0;
+  --z-sticky: 20;
+  --z-top-nav: 40;
+  --z-bottom-nav: 50;
+  --z-popover: 60;
+  --z-modal: 70;
+  --z-toast: 80;
+  --z-player: 90;
+
+  /* Ambient durations */
+  --dur-ambient-swap: 700ms;
+
   /* Motion */
   --motion-speed: 1;
   --dur-instant: calc(80ms * var(--motion-speed));

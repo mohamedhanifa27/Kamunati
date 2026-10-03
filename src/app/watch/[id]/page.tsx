@@ -2,6 +2,7 @@ import React from 'react';
 import { PrismaClient } from '@prisma/client';
 import { notFound } from 'next/navigation';
 import VideoPlayer from '../../../components/player/VideoPlayer';
+import { AmbientPauser } from '@/features/ambient';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="w-screen h-screen bg-bg overflow-hidden relative">
+      <AmbientPauser />
       <VideoPlayer 
         mediaId={media.id}
         title={media.title}

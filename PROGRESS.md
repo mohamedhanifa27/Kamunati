@@ -6,7 +6,7 @@
 |---|---|---|---|
 | U1 Baseline | `chore/update-baseline` | ✅ Complete | Docs in `docs/update-baseline/` |
 | U2 Data Model | `feat/u2-data-model` | ✅ Complete | See below |
-| A Ambient | — | ⏳ Pending | Waiting for approval |
+| A Ambient | `feat/a-ambient-background` | ✅ Complete | WebGL2 + PI Controller |
 | B Card Interactions | — | ⏳ Pending | |
 | C Navigation | — | ⏳ Pending | |
 | E Profile | — | ⏳ Pending | |

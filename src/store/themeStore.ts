@@ -33,6 +33,11 @@ export type AppearancePrefs = {
   filmGrain: boolean;
   subtitleStyle: { size: number; color: string; background: string; edge: 'none' | 'shadow' | 'outline' };
   updatedAt: string;
+  
+  // U2 Additions
+  ambient?: { mode: 'live' | 'calm' | 'static' | 'off' };
+  sounds?: { enabled: boolean; volume: number; onHover: boolean; onScroll: boolean; haptics: boolean };
+  myList?: { view: 'grid' | 'list'; sort: 'manual' | 'recent' | 'az' | 'year' };
 };
 
 interface ThemeStore extends AppearancePrefs {
@@ -64,6 +69,10 @@ const defaultPrefs: AppearancePrefs = {
   filmGrain: false,
   subtitleStyle: { size: 1, color: '#ffffff', background: 'rgba(0,0,0,0.8)', edge: 'shadow' },
   updatedAt: new Date().toISOString(),
+  
+  ambient: { mode: 'live' },
+  sounds: { enabled: true, volume: 0.35, onHover: true, onScroll: true, haptics: false },
+  myList: { view: 'grid', sort: 'recent' },
 };
 
 export const useThemeStore = create<ThemeStore>()(

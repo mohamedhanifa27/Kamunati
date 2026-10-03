@@ -6,6 +6,10 @@ import Navbar from '../components/layout/Navbar';
 import MainLayout from '../components/layout/MainLayout';
 import { FloatingNavDock } from '../components/ui/FloatingNavDock';
 import { ViewTransitions } from 'next-view-transitions';
+import { AmbientProvider } from '../features/ambient';
+import { AmbientDebug } from '../features/ambient/devtools/AmbientDebug';
+import { AmbientSync } from '../features/ambient/AmbientSync';
+import { featureFlags } from '../lib/featureFlags';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
@@ -28,12 +32,17 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html lang="en">
-        <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body bg-bg text-text`}>
-          <ThemeProvider>
-            <Navbar />
-            <MainLayout>{children}</MainLayout>
-            <FloatingNavDock />
-          </ThemeProvider>
+        {/* bg-black: pure black base so ambient canvas blends correctly */}
+        <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body text-text bg-black`}>
+          <AmbientProvider enabled={featureFlags.ambientBackground}>
+            <AmbientSync />
+            <ThemeProvider>
+              <Navbar />
+              <MainLayout>{children}</MainLayout>
+              <FloatingNavDock />
+            </ThemeProvider>
+            <AmbientDebug />
+          </AmbientProvider>
         </body>
       </html>
     </ViewTransitions>
