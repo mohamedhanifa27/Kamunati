@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Bell, User, Palette } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +21,10 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (pathname === '/login' || pathname.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <header className={`fixed top-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-bg' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
