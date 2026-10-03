@@ -8,7 +8,7 @@ RUN apk add --no-cache python3 make g++ openssl
 
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 RUN npx prisma generate
