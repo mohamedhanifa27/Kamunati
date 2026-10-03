@@ -57,8 +57,12 @@ const CIRCLE_RUNTIME_STYLE = `
   }
 
   body[data-shape="circle"] .btn .lbl {
-    display: none;
-  }
+      display: none;
+    }
+    /* Hide the icon so it acts purely as a shader pool */
+    body[data-shape="circle"] .btn .ico {
+      display: none !important;
+    }
 </style>`;
 
 function sourceForVariant(variant: Exclude<LiquidMetalButtonVariant, "play">) {
