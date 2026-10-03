@@ -7,6 +7,15 @@ async function main() {
   const adminPassword = await bcrypt.hash('admin123', 10);
   const testerPassword = await bcrypt.hash('tester123', 10);
 
+  // Strictly wipe any other users
+  await prisma.user.deleteMany({
+    where: {
+      email: {
+        notIn: ['admin@kamunati.com', 'testerprime@kamunati.com']
+      }
+    }
+  });
+
   // Upsert Admin
   const admin = await prisma.user.upsert({
     where: { email: 'admin@kamunati.com' },

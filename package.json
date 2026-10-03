@@ -6,9 +6,12 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "build": "tsc -p tsconfig.server.json",
-    "start": "node dist/server.js",
-    "dev": "ts-node --transpile-only src/server.ts"
+    "build:engine": "tsc -p tsconfig.server.json",
+    "build:ui": "next build",
+    "start:engine": "node dist/server.js",
+    "start:ui": "next start",
+    "dev:engine": "ts-node --transpile-only src/server.ts",
+    "dev:ui": "next dev"
   },
   "dependencies": {
     "@designcodeio/threeui": "^1.2.0",
