@@ -11,6 +11,7 @@ import { AmbientDebug } from '../features/ambient/devtools/AmbientDebug';
 import { AmbientSync } from '../features/ambient/AmbientSync';
 import { featureFlags } from '../lib/featureFlags';
 import { SearchCard } from '../components/search/SearchCard';
+import { IntroGate } from '../components/layout/IntroGate';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
@@ -35,6 +36,7 @@ export default function RootLayout({
       <html lang="en">
         {/* bg-black: pure black base so ambient canvas blends correctly */}
         <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body text-text bg-black`}>
+          <IntroGate />
           <AmbientProvider enabled={featureFlags.ambientBackground}>
             <AmbientSync />
             <ThemeProvider>
