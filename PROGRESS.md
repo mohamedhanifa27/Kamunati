@@ -8,7 +8,7 @@
 | U2 Data Model | `feat/u2-data-model` | ✅ Complete | See below |
 | A Ambient | `feat/a-ambient-background` | ✅ Complete | WebGL2 + PI Controller |
 | B Card Interactions | `feat/b-card-interactions` | ✅ Complete | Lift, banner and sound engine added |
-| C Navigation | — | ⏳ Pending | |
+| C Navigation | `feat/c-navigation` | ✅ Complete | Centered pill, Settings bottom nav |
 | E Profile | — | ⏳ Pending | |
 | D Settings | — | ⏳ Pending | |
 | F Search Card | — | ⏳ Pending | |

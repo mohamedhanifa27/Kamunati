@@ -6,6 +6,27 @@ const nextConfig = {
   devIndicators: {
     buildActivity: false,
     appIsrStatus: false
+  },
+  async redirects() {
+    return [
+      {
+        source: '/tv-series',
+        destination: '/series',
+        permanent: true,
+      }
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/my-list',
+        destination: '/list',
+      },
+      {
+        source: '/profile',
+        destination: '/profiles',
+      }
+    ];
   }
 };
 
