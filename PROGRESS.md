@@ -65,3 +65,4 @@ Override via env: `FLAG_AMBIENT_BACKGROUND=true`, etc.
 ### Known Issues
 - SQLite no native enums — String workaround used throughout.
 - Pre-existing test failures from U1 still present (not touched).
+

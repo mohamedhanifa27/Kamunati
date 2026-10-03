@@ -133,12 +133,16 @@ export default function ProfileDashboard() {
           { label: 'Titles Watched', value: stats.titlesWatched },
           { label: 'Hours Watched', value: stats.hoursWatched },
           { label: 'My List Size', value: stats.listSize },
-          { label: 'Reviews', value: stats.reviewsWritten },
+          { label: 'Reviews', value: stats.reviewsWritten, href: '/profile/reviews' },
         ].map(s => (
+          s.href ? (<Link key={s.label} href={s.href} className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-lg flex flex-col items-center text-center hover:bg-white/10 transition-colors">
+            <span className="text-3xl font-bold font-heading mb-1">{s.value}</span>
+            <span className="text-sm text-neutral-400">{s.label}</span>
+          </Link>) : (
           <div key={s.label} className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-lg flex flex-col items-center text-center">
             <span className="text-3xl font-bold font-heading mb-1">{s.value}</span>
             <span className="text-sm text-neutral-400">{s.label}</span>
-          </div>
+          </div>)
         ))}
       </div>
 
@@ -254,3 +258,4 @@ export default function ProfileDashboard() {
     </div>
   );
 }
+

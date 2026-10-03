@@ -208,12 +208,12 @@ export function HoverBanner({ anchorElement, media, onPointerEnter, onPointerLea
           >
             <PlusIcon size={16} />
           </button>
-          <button 
+            <Link href={'/title/' + media.id}
             title="More Info"
             className="w-8 h-8 flex items-center justify-center rounded-full border-2 border-neutral-500 text-white hover:border-white transition-colors"
           >
             <InfoIcon size={16} />
-          </button>
+            </Link>
         </div>
       </div>
     </motion.div>
@@ -224,3 +224,5 @@ export function HoverBanner({ anchorElement, media, onPointerEnter, onPointerLea
     document.body
   );
 }
+
+
