@@ -70,11 +70,11 @@ function LoginForm() {
 
       <div className="z-10 flex flex-col items-center w-full max-w-md relative">
           {/* Logo properly placed above the card */}
-          <div className="mb-6 group cursor-pointer z-50">
+          <div className="mb-8 group cursor-pointer z-50">
             <img 
               src="/logo.png" 
               alt="Kamunati" 
-              className="h-14 object-contain transition-all duration-300 group-hover:drop-shadow-[0_0_25px_rgba(138,43,226,1)] group-hover:scale-110" 
+              className="h-24 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] transition-all duration-300 group-hover:drop-shadow-[0_0_35px_rgba(138,43,226,1)] group-hover:scale-105" 
             />
           </div>
 
