@@ -68,12 +68,15 @@ function LoginForm() {
         />
       </div>
 
-      <div className="z-10 w-full max-w-md p-8 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative">
-        <div className="flex justify-center mb-8">
-          <img src="/logo.png" alt="Kamunati" className="h-12 object-contain" />
-        </div>
+      <div className="z-10 w-full max-w-md px-8 pb-8 pt-16 mt-16 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative">
+          
+          {/* Funky Floating Logo */}
+          <div className="absolute -top-16 left-1/2 -translate-x-1/2 transform -rotate-[6deg] hover:rotate-[4deg] transition-all duration-500 hover:scale-110 z-50 group">
+            <div className="absolute inset-0 bg-primary/60 blur-[30px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <img src="/logo.png" alt="Kamunati" className="h-24 object-contain drop-shadow-[0_0_20px_rgba(138,43,226,0.6)] relative z-10" />
+          </div>
 
-        <h2 className="text-2xl font-bold text-white text-center mb-6">
+          <h2 className="text-3xl font-black text-white text-center mb-8 tracking-wide">
           {isSignUp ? 'Create an Account' : 'Welcome Back'}
         </h2>
 
