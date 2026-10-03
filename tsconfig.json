@@ -17,6 +17,7 @@
     "incremental": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "paths": { "@/*": ["./src/*"] },
     "isolatedModules": true,
     "jsx": "react-jsx",
     "plugins": [

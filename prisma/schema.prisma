@@ -7,138 +7,309 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-// Enums removed because SQLite does not support them. We will use String instead.
+// SQLite does not support enums — all enum-like fields use String with comments.
+
+// ─── EXISTING MODELS (additive changes only, no renames/drops) ───────────────
 
 model User {
-  id             String         @id @default(uuid())
-  email          String         @unique
-  passwordHash   String
-  role           String         @default("USER") // sqlite workaround for enums: use string or just stick to string if prisma warns. Using String for broader compatibility.
-  preferences    String?        // JSON string for sqlite
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  watchProgress  WatchProgress[]
-  watchlists     Watchlist[]
-  ratings        Rating[]
+  id                  String              @id @default(uuid())
+  email               String              @unique
+  passwordHash        String
+  role                String              @default("USER")
+  preferences         String?             // JSON string
+  mustChangePassword  Boolean             @default(false)  // U2.5: admin-created accounts
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  watchProgress       WatchProgress[]
+  watchlists          Watchlist[]
+  ratings             Rating[]
+  // U2 relations
+  otpChallenges       OtpChallenge[]
+  passwordGrants      PasswordChangeGrant[]
+  searchHistory       SearchHistory[]
+  reviews             Review[]
+  reviewReports       ReviewReport[]
+  restrictions        UserRestriction[]   @relation("RestrictedUser")
+  restrictionsCreated UserRestriction[]   @relation("RestrictionCreator")
+  restrictionsRevoked UserRestriction[]   @relation("RestrictionRevoker")
+  reviewsMod          Review[]            @relation("ModeratedReviews")
 }
 
 model Media {
-  id             String         @id @default(uuid())
-  tmdbId         Int?           @unique
-  imdbId         String?
-  title          String
-  originalTitle  String?
-  type           String         // MOVIE or SERIES
-  slug           String         @unique
-  overview       String?
-  tagline        String?
-  posterPath     String?
-  backdropPath   String?
-  releaseYear    Int?
-  runtime        Int?
-  rating         Float?
-  voteCount      Int?
-  genres         String         // JSON array for sqlite
-  isPublished    Boolean        @default(false)
-  isFeatured     Boolean        @default(false)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id                      String        @id @default(uuid())
+  tmdbId                  Int?          @unique
+  imdbId                  String?
+  title                   String
+  originalTitle           String?
+  type                    String        // MOVIE or SERIES
+  slug                    String        @unique
+  overview                String?
+  tagline                 String?
+  posterPath              String?
+  backdropPath            String?
+  releaseYear             Int?
+  runtime                 Int?
+  rating                  Float?
+  voteCount               Int?
+  genres                  String        // JSON array
+  isPublished             Boolean       @default(false)
+  isFeatured              Boolean       @default(false)
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
 
-  seasons        Season[]
-  torrents       TorrentSource[]
-  watchProgress  WatchProgress[]
-  watchlists     Watchlist[]
-  ratings        Rating[]
+  // U2.1: Category, hover banner, ambient palette
+  category                String?       // MOVIE | TV_SERIES | ANIME
+  hoverBannerKey          String?
+  hoverBannerFocal        String?       // JSON: { x, y }
+  hoverClipKey            String?
+  hoverClipDurationSec    Int?
+  hoverTagline            String?       // max 120 chars
+  ambientPalette          String?       // JSON: [{ hex, weight }]
+  ambientPaletteSource    String        @default("AUTO")  // AUTO | MANUAL
+  ambientPaletteUpdatedAt DateTime?
+
+  // U2.G: Denormalized review aggregates
+  reviewCount             Int           @default(0)
+  reviewAvgRating         Float?
+
+  seasons       Season[]
+  torrents      TorrentSource[]
+  watchProgress WatchProgress[]
+  watchlists    Watchlist[]
+  ratings       Rating[]
+  reviews       Review[]
+
+  @@index([category, isPublished])
 }
 
 model Season {
-  id             String         @id @default(uuid())
-  mediaId        String
-  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  seasonNumber   Int
-  name           String?
-  overview       String?
-  posterPath     String?
-  airDate        DateTime?
-  
-  episodes       Episode[]
-  
+  id           String    @id @default(uuid())
+  mediaId      String
+  media        Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  seasonNumber Int
+  name         String?
+  overview     String?
+  posterPath   String?
+  airDate      DateTime?
+
+  episodes Episode[]
+
   @@unique([mediaId, seasonNumber])
 }
 
 model Episode {
-  id             String         @id @default(uuid())
-  seasonId       String
-  season         Season         @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  episodeNumber  Int
-  title          String?
-  overview       String?
-  stillPath      String?
-  airDate        DateTime?
-  duration       Int?
+  id            String    @id @default(uuid())
+  seasonId      String
+  season        Season    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeNumber Int
+  title         String?
+  overview      String?
+  stillPath     String?
+  airDate       DateTime?
+  duration      Int?
 
-  torrents       TorrentSource[]
-  watchProgress  WatchProgress[]
+  // U2.1: Ambient palette on episode stills
+  ambientPalette String?  // JSON: [{ hex, weight }]
+
+  torrents      TorrentSource[]
+  watchProgress WatchProgress[]
 
   @@unique([seasonId, episodeNumber])
 }
 
 model TorrentSource {
-  id             String         @id @default(uuid())
-  mediaId        String?
-  media          Media?         @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  episodeId      String?
-  episode        Episode?       @relation(fields: [episodeId], references: [id], onDelete: Cascade)
-  title          String
-  magnetUri      String
-  infoHash       String
-  fileIndex      Int
-  resolution     String         // RES_4K, etc
-  codec          String?
-  container      String?
-  sizeInBytes    BigInt?
-  seeders        Int            @default(0)
-  leechers       Int            @default(0)
-  lastCheckedAt  DateTime?
+  id            String   @id @default(uuid())
+  mediaId       String?
+  media         Media?   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  episodeId     String?
+  episode       Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  title         String
+  magnetUri     String
+  infoHash      String
+  fileIndex     Int
+  resolution    String
+  codec         String?
+  container     String?
+  sizeInBytes   BigInt?
+  seeders       Int      @default(0)
+  leechers      Int      @default(0)
+  lastCheckedAt DateTime?
 
   @@index([infoHash])
 }
 
 model WatchProgress {
-  id             String         @id @default(uuid())
-  userId         String
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mediaId        String
-  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  episodeId      String?
-  episode        Episode?       @relation(fields: [episodeId], references: [id], onDelete: Cascade)
-  timestampSec   Int            @default(0)
-  isCompleted    Boolean        @default(false)
-  updatedAt      DateTime       @updatedAt
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaId     String
+  media       Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  episodeId   String?
+  episode     Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  timestampSec Int     @default(0)
+  isCompleted  Boolean @default(false)
+  updatedAt   DateTime @updatedAt
+
+  // U2.3: Continue Watching management
+  hiddenFromContinue Boolean   @default(false)
+  hiddenAt           DateTime?
+  watchedAt          DateTime? // set when isCompleted becomes true
 
   @@unique([userId, mediaId, episodeId])
 }
 
 model Watchlist {
-  id             String         @id @default(uuid())
-  userId         String
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mediaId        String
-  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  addedAt        DateTime       @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  addedAt   DateTime @default(now())
+
+  // U2.3: Manual ordering
+  sortOrder Int?
 
   @@unique([userId, mediaId])
 }
 
 model Rating {
-  id             String         @id @default(uuid())
-  userId         String
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mediaId        String
-  media          Media          @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  score          Int            // e.g., 1 to 5
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  score     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, mediaId])
+}
+
+// ─── U2.4 SEARCH HISTORY ─────────────────────────────────────────────────────
+
+model SearchHistory {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  queryNormalized String   // lowercased, trimmed, collapsed spaces
+  queryDisplay    String   // as typed, max 80 chars
+  count           Int      @default(1)
+  createdAt       DateTime @default(now())
+  lastSearchedAt  DateTime @default(now())
+
+  @@unique([userId, queryNormalized])
+  @@index([userId, lastSearchedAt])
+}
+
+// ─── U2.5 PASSWORD CHANGE OTP ────────────────────────────────────────────────
+
+model OtpChallenge {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose     String    // PASSWORD_CHANGE
+  codeHash    String
+  salt        String
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  lastSentAt  DateTime  @default(now())
+  sendCount   Int       @default(1)
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, purpose, createdAt])
+}
+
+model PasswordChangeGrant {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// ─── U2.6 REVIEWS ────────────────────────────────────────────────────────────
+
+model Review {
+  id               String    @id @default(uuid())
+  mediaId          String
+  media            Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  userId           String?
+  user             User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  rating           Int       // 1–5
+  body             String    // 10–1500 chars
+  containsSpoilers Boolean   @default(false)
+  status           String    @default("VISIBLE") // VISIBLE | HIDDEN | REMOVED
+  isEditorial      Boolean   @default(false)
+  authorLabel      String?   // e.g. "Editor's pick"
+  isPinned         Boolean   @default(false)
+  editedAt         DateTime?
+  moderatedById    String?
+  moderatedBy      User?     @relation("ModeratedReviews", fields: [moderatedById], references: [id], onDelete: SetNull)
+  moderationNote   String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  reports ReviewReport[]
+
+  @@unique([mediaId, userId])  // one user review per title; editorial has userId null
+  @@index([mediaId, status, createdAt])
+  @@index([userId])
+}
+
+model ReviewReport {
+  id             String   @id @default(uuid())
+  reviewId       String
+  review         Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reporterUserId String
+  reporter       User     @relation(fields: [reporterUserId], references: [id], onDelete: Cascade)
+  reason         String   // SPAM | ABUSE | SPOILER | OFF_TOPIC | OTHER
+  details        String?
+  status         String   @default("OPEN") // OPEN | RESOLVED | REJECTED
+  handledById    String?
+  createdAt      DateTime @default(now())
+
+  @@unique([reviewId, reporterUserId])
+}
+
+// ─── U2.7 USER RESTRICTIONS ──────────────────────────────────────────────────
+
+model UserRestriction {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation("RestrictedUser", fields: [userId], references: [id], onDelete: Cascade)
+  type         String    // WATCH_BLOCK | REVIEW_BLOCK
+  reason       String    // required, shown to user
+  expiresAt    DateTime? // null = permanent
+  createdById  String
+  createdBy    User      @relation("RestrictionCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  revokedAt    DateTime?
+  revokedById  String?
+  revokedBy    User?     @relation("RestrictionRevoker", fields: [revokedById], references: [id], onDelete: SetNull)
+  revokeNote   String?
+  internalNote String?
+
+  @@index([userId, type, revokedAt, expiresAt])
+}
+
+// ─── U2.8 DELETED USER TOMBSTONE ─────────────────────────────────────────────
+
+model DeletedUserTombstone {
+  id          String   @id @default(uuid())
+  userIdHash  String   // SHA-256 of userId + server pepper
+  emailHash   String   // SHA-256 of lowercased email + server pepper
+  deletedAt   DateTime @default(now())
+  deletedById String?
+  reason      String?
+
+  @@index([emailHash])
 }

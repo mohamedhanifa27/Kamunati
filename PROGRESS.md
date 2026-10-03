@@ -1,35 +1,67 @@
-# PROGRESS
+# PROGRESS.md — Space Gradients Edition
 
-## Current Phase and Step
-- **Phase 14: Documentation and final audit** - COMPLETED
-- **PROJECT FULLY COMPLETED** 🎉
+## Status
 
-## Completed phases
-- Phase 1: Project bootstrap and repo structure (Adopted existing monorepo)
-- Phase 2: Design system and theming engine (2026-10-02)
-- Phase 3: User side frontend (2026-10-02)
-- Phase 4: Admin side frontend (2026-10-02)
-- Phase 5-9: Backend/Streaming engine (Done previously)
-- Phase 10: Preferences sync, search, ratings (2026-10-02)
-- Phase 11: Performance, caching and resilience (2026-10-02)
-- Phase 12: Testing (2026-10-02)
-- Phase 13: Docker, CI/CD and deployment (Render & Docker complete)
-- Phase 14: Documentation and final audit (2026-10-02)
+| Workstream | Branch | Status | Notes |
+|---|---|---|---|
+| U1 Baseline | `chore/update-baseline` | ✅ Complete | Docs in `docs/update-baseline/` |
+| U2 Data Model | `feat/u2-data-model` | ✅ Complete | See below |
+| A Ambient | — | ⏳ Pending | Waiting for approval |
+| B Card Interactions | — | ⏳ Pending | |
+| C Navigation | — | ⏳ Pending | |
+| E Profile | — | ⏳ Pending | |
+| D Settings | — | ⏳ Pending | |
+| F Search Card | — | ⏳ Pending | |
+| G Reviews | — | ⏳ Pending | |
+| H Admin Upgrades | — | ⏳ Pending | |
 
-## Decisions made
-- We are keeping Next.js 15 instead of migrating to Vite (as approved via Prompt 0B).
-- Colors are implemented via CSS variable tokens (`--c-bg`, `--c-primary`) formatted as space-separated RGB values, allowing Tailwind to generate opacity correctly.
-- The Zustand store for user settings (`themeStore.ts`) was expanded to strictly match the `AppearancePrefs` definition in the Master Prompt.
-- We added `/settings/appearance` to act as the live theme-builder.
-- Replaced the old generic colors with explicit Design Tokens from `presets.json` (Appendix A).
+---
 
-## Known issues and follow-ups
-- The Home page continues to use some mock data for "Continue Watching". Needs to be linked up in Phase 3.
-- Need to expand the settings page with advanced animations and density adjustments.
+## U2 — Data Model, Contracts and Migrations
 
-## How to run everything locally
-- Frontend: `npm run dev:ui`
-- Backend: `npm run dev:api`
+### New DB Tables (all additive)
+| Table | Purpose |
+|---|---|
+| `SearchHistory` | Per-user search history, capped at 50, retained 180 days |
+| `OtpChallenge` | OTP for password change — hashed, rate-limited |
+| `PasswordChangeGrant` | Single-use grant issued after correct OTP |
+| `Review` | User and editorial reviews per title |
+| `ReviewReport` | User reports on reviews |
+| `UserRestriction` | Admin-applied watch/review blocks with expiry |
+| `DeletedUserTombstone` | Audit trail for permanently deleted users (no PII) |
 
-## Environment variables added so far
-- None recently (kept default from previous sessions)
+### New Columns on Existing Tables (all nullable/default)
+| Table | Column(s) |
+|---|---|
+| `User` | `mustChangePassword` |
+| `Media` | `category`, `hoverBannerKey`, `hoverBannerFocal`, `hoverClipKey`, `hoverClipDurationSec`, `hoverTagline`, `ambientPalette`, `ambientPaletteSource`, `ambientPaletteUpdatedAt`, `reviewCount`, `reviewAvgRating` |
+| `Episode` | `ambientPalette` |
+| `WatchProgress` | `hiddenFromContinue`, `hiddenAt`, `watchedAt` |
+| `Watchlist` | `sortOrder` |
+
+### New Zod Schemas (src/lib/schemas/index.ts)
+- `AmbientPaletteSchema`, `TitleCategorySchema`, `TitleSummarySchema`, `TitleDetailSchema`
+- `PasswordOtpRequestSchema`, `PasswordOtpVerifySchema`, `PasswordChangeSchema`
+- `SearchHistoryItemSchema`, `SearchSuggestionSchema`
+- `ReviewSchema`, `ReviewCreateSchema`, `ReviewUpdateSchema`, `ReviewReportSchema`
+- `UserRestrictionSchema`, `RestrictionCreateSchema`
+- `AdminCreateUserSchema`, `AdminDeleteUserSchema`
+- `MyListOrderSchema`, `ContinueWatchingActionSchema`
+- `AppearancePrefsV2Schema`
+
+### New API Route Stubs (all return 501 behind feature flags)
+- `POST /api/account/password/otp`
+- `POST /api/account/password/change`
+- `GET/POST/DELETE /api/search/history`
+- `GET /api/search/similar`
+- `GET /api/search/trending`
+- `GET/POST /api/reviews`
+- `GET/POST /api/admin/users`
+
+### Feature Flags
+All flags now default ON in development, OFF in production.
+Override via env: `FLAG_AMBIENT_BACKGROUND=true`, etc.
+
+### Known Issues
+- SQLite no native enums — String workaround used throughout.
+- Pre-existing test failures from U1 still present (not touched).
