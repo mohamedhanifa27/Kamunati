@@ -13,6 +13,7 @@ const PredictiveArcCanvas = dynamic(
   { ssr: false }
 );
 import '../../shaders/threeui.css';
+import { LiquidMetalButton } from '../../shaders/liquid-metal-button/LiquidMetalButton';
 
 function LoginForm() {
   const router = useTransitionRouter();
@@ -72,11 +73,7 @@ function LoginForm() {
       <div className="z-10 flex flex-col items-center w-full max-w-md relative -translate-y-12">
           {/* Logo properly placed above the card */}
           <div className="mb-8 group cursor-pointer z-50">
-            <img 
-              src="/logo.png" 
-              alt="Kamunati" 
-              className="h-[120px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] transition-all duration-300 group-hover:scale-105" 
-            />
+            <LiquidMetalButton variant="play" rendering="colored" diameter={120} strokeWidth={3.0} text="Play" />
           </div>
 
           <div className="w-full p-8 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative">
