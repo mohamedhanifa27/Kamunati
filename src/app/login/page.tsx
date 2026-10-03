@@ -57,7 +57,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ fontFamily: "'Montserrat Alternates', sans-serif" }}>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ fontFamily: "'Glonto Sans', 'Montserrat Alternates', sans-serif" }}>
       {/* ThreeUI Predictive Arc Background */}
       <div className="absolute inset-0 z-0 bg-[#040607]">
         <PredictiveArcCanvas
