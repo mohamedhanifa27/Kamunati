@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 import TMDBImportModal from '../../../../components/admin/TMDBImportModal';
 import TorrentUploader, { TorrentMetadata } from '../../../../components/admin/TorrentUploader';

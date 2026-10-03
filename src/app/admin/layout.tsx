@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import { LayoutDashboard, Clapperboard, Activity, Users, Settings, Search, Bell, LogOut } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();

@@ -4,6 +4,7 @@ import './globals.css';
 import ThemeProvider from '../components/ThemeProvider';
 import Navbar from '../components/layout/Navbar';
 import { FloatingNavDock } from '../components/ui/FloatingNavDock';
+import { ViewTransitions } from 'next-view-transitions';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
@@ -24,16 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body bg-bg text-text live-gradient`}>
-        <ThemeProvider>
-          <Navbar />
-          <main className="min-h-screen relative z-10 pb-24">
-            {children}
-          </main>
-          <FloatingNavDock />
-        </ThemeProvider>
-      </body>
-    </html>
+    <ViewTransitions>
+      <html lang="en">
+        <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body bg-bg text-text live-gradient`}>
+          <ThemeProvider>
+            <Navbar />
+            <main className="min-h-screen relative z-10 pb-24">
+              {children}
+            </main>
+            <FloatingNavDock />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCcw, Home } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 interface Props {
   children: ReactNode;

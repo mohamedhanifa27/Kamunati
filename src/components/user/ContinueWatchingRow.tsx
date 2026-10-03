@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, PlayIcon } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 interface ProgressItem {
   id: string; // WatchProgress record ID

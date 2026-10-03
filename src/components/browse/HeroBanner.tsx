@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PlayIcon, InformationCircleIcon, PlusIcon, CheckIcon, StarIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { useThemeStore } from '../../store/themeStore';
 
 interface HeroBannerProps {

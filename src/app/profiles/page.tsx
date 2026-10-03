@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { useThemeStore } from '../../store/themeStore';
 import { PlusCircle } from 'lucide-react';
 

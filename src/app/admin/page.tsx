@@ -1,6 +1,6 @@
 import React from 'react';
 import { PrismaClient } from '@prisma/client';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { Film, Edit3, Plus, Trash2 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';

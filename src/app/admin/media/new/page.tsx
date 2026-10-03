@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import { Loader2, Film, CheckCircle, Search, FileDown, ShieldCheck, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export default function NewMediaWizard() {

@@ -2,7 +2,8 @@
 
 import React, { useState, Suspense } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useTransitionRouter } from 'next-view-transitions';
 import { Loader2 } from 'lucide-react';
 
 import dynamic from 'next/dynamic';
@@ -14,7 +15,7 @@ const PredictiveArcCanvas = dynamic(
 import '../../shaders/threeui.css';
 
 function LoginForm() {
-  const router = useRouter();
+  const router = useTransitionRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/admin';
 
