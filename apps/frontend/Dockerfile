@@ -28,7 +28,7 @@ RUN adduser --system --uid 1001 nextjs
 RUN apk add --no-cache openssl
 
 # Install prisma CLI so we can push the schema at runtime
-RUN npm install -g prisma
+RUN npm install -g prisma@5.22.0
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
