@@ -7,7 +7,7 @@
 | U1 Baseline | `chore/update-baseline` | ✅ Complete | Docs in `docs/update-baseline/` |
 | U2 Data Model | `feat/u2-data-model` | ✅ Complete | See below |
 | A Ambient | `feat/a-ambient-background` | ✅ Complete | WebGL2 + PI Controller |
-| B Card Interactions | — | ⏳ Pending | |
+| B Card Interactions | `feat/b-card-interactions` | ✅ Complete | Lift, banner and sound engine added |
 | C Navigation | — | ⏳ Pending | |
 | E Profile | — | ⏳ Pending | |
 | D Settings | — | ⏳ Pending | |

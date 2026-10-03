@@ -15,6 +15,30 @@ export default function BrowsePage() {
 
   const isLoading = !mediaList;
 
+  const mapMediaItem = (m: any) => {
+    let ambientPalette;
+    try {
+      if (typeof m.ambientPalette === 'string') ambientPalette = JSON.parse(m.ambientPalette);
+      else ambientPalette = m.ambientPalette;
+    } catch (e) {}
+    
+    return {
+      id: m.id || m.media?.id, // support both raw media and nested items
+      title: m.title || m.media?.title,
+      posterUrl: m.posterPath || m.backdropPath || m.media?.posterPath || m.media?.backdropPath || '/logo_vector.svg',
+      backdropUrl: m.backdropPath || m.posterPath || m.media?.backdropPath || m.media?.posterPath,
+      qualityBadge: m.infoHash || m.media?.infoHash ? 'HD' : undefined,
+      hoverBannerUrl: m.hoverBannerKey || m.media?.hoverBannerKey,
+      hoverClipUrl: m.hoverClipKey || m.media?.hoverClipKey,
+      hoverTagline: m.hoverTagline || m.media?.hoverTagline,
+      ambientPalette: ambientPalette || (m.media?.ambientPalette ? JSON.parse(m.media.ambientPalette) : undefined),
+      category: m.category || m.media?.category,
+      releaseYear: m.releaseYear || m.media?.releaseYear,
+      rating: m.rating || m.media?.rating,
+      runtime: m.runtime || m.media?.runtime,
+    };
+  };
+
   const safeProgressData = Array.isArray(progressData) ? progressData : [];
   const continueWatching = safeProgressData.map((item: any) => ({
     id: item.id,
@@ -23,23 +47,14 @@ export default function BrowsePage() {
     posterUrl: item.media.backdropPath || item.media.posterPath,
     progressPercent: (item.timestampSec / 120) * 100, 
     timestampSec: item.timestampSec,
+    ambientPalette: item.media.ambientPalette ? JSON.parse(item.media.ambientPalette) : undefined
   }));
 
   const safeWatchlistData = Array.isArray(watchlistData) ? watchlistData : [];
-  const myListMapped = safeWatchlistData.map((item: any) => ({
-    id: item.media.id,
-    title: item.media.title,
-    posterUrl: item.media.posterPath || item.media.backdropPath || '/logo_vector.svg',
-  }));
+  const myListMapped = safeWatchlistData.map(mapMediaItem);
 
   const safeMediaList = Array.isArray(mediaList) ? mediaList : [];
-  
-  const trendingMovies = safeMediaList.map((m: any) => ({
-    id: m.id,
-    title: m.title,
-    posterUrl: m.posterPath || m.backdropPath || '/logo_vector.svg',
-    qualityBadge: m.infoHash ? 'HD' : undefined
-  }));
+  const trendingMovies = safeMediaList.map(mapMediaItem);
 
   const featuredMedia = safeMediaList.length > 0 ? {
     mediaId: safeMediaList[0].id,
@@ -59,8 +74,6 @@ export default function BrowsePage() {
 
   return (
     <div className="min-h-screen overflow-x-hidden pt-0 relative">
-      {/* Fixed animated space gradient background */}
-      <div className="fixed inset-0 -z-20 live-gradient" />
       <HeroBanner 
         mediaId={featuredMedia.mediaId}
         title={featuredMedia.title}

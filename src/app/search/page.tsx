@@ -54,14 +54,32 @@ export default function SearchPage() {
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {results.map((media: any) => (
-                  <MediaCard 
-                    key={media.id} 
-                    id={media.id} 
-                    title={media.title} 
-                    posterUrl={media.posterPath || media.backdropPath || '/logo_vector.svg'} 
-                  />
-                ))}
+                {results.map((media: any) => {
+                  let ambientPalette;
+                  try {
+                    if (typeof media.ambientPalette === 'string') ambientPalette = JSON.parse(media.ambientPalette);
+                    else ambientPalette = media.ambientPalette;
+                  } catch(e) {}
+                  return (
+                    <MediaCard 
+                      key={media.id} 
+                      id={media.id} 
+                      title={media.title} 
+                      posterUrl={media.posterPath || media.backdropPath || '/logo_vector.svg'}
+                      backdropUrl={media.backdropPath || media.posterPath}
+                      hoverBannerUrl={media.hoverBannerKey}
+                      hoverClipUrl={media.hoverClipKey}
+                      hoverTagline={media.hoverTagline}
+                      ambientPalette={ambientPalette}
+                      metadata={{
+                        category: media.category,
+                        year: media.releaseYear,
+                        rating: media.rating,
+                        runtime: media.runtime
+                      }}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>
