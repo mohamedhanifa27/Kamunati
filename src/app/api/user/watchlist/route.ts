@@ -46,10 +46,23 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { searchParams } = new URL(req.url);
+  const sort = searchParams.get('sort') || 'recent';
+
   try {
-    const list = await prisma.watchlist.findMany({
+    let orderBy: any = { addedAt: 'desc' };
+    
+    if (sort === 'manual') {
+      orderBy = { sortOrder: 'asc' }; // Manual sort uses sortOrder (and falls back to something else ideally, but Prisma handles nulls last usually, or we can just use sortOrder)
+    } else if (sort === 'az') {
+      orderBy = { media: { title: 'asc' } };
+    } else if (sort === 'year') {
+      orderBy = { media: { releaseYear: 'desc' } };
+    }
+
+    let list = await prisma.watchlist.findMany({
       where: { userId: session.user.id },
-      orderBy: { addedAt: 'desc' },
+      orderBy: sort === 'manual' ? [{ sortOrder: 'asc' }, { addedAt: 'desc' }] : orderBy,
       include: { media: true }
     });
     

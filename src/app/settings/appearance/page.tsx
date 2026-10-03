@@ -83,6 +83,39 @@ export default function AppearanceSettingsPage() {
             ))}
           </div>
         </section>
+
+        {/* Backgrounds */}
+        <section>
+          <h2 className="text-2xl font-heading mb-4">Background Effects</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label className="block text-text-muted mb-2">Ambient Background Type</label>
+              <select 
+                value={prefs.ambient?.mode || 'none'}
+                onChange={(e) => prefs.setPrefs({ ambient: { ...prefs.ambient, mode: e.target.value as any } })}
+                className="w-full bg-surface border border-border rounded p-3 text-text"
+              >
+                <option value="none">None (Solid Color)</option>
+                <option value="predictive">Predictive Arc (WebGL)</option>
+                <option value="neuform">Neuform Isolated (WebGL)</option>
+              </select>
+            </div>
+            
+            {(prefs.ambient?.mode === 'predictive' || prefs.ambient?.mode === 'neuform') && (
+              <div>
+                <label className="block text-text-muted mb-2">Background Motion Speed</label>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="100" 
+                  value={((prefs.ambient as any)?.speed || 1) * 50} 
+                  onChange={e => prefs.setPrefs({ ambient: { ...prefs.ambient, speed: parseInt(e.target.value) / 50 } as any })}
+                  className="w-full accent-primary"
+                />
+              </div>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );

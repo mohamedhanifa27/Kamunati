@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     if (existing) {
       await prisma.watchProgress.update({
         where: { id: existing.id },
-        data: { timestampSec: progressSeconds, isCompleted }
+        data: { timestampSec: progressSeconds, isCompleted, hiddenFromContinue: false }
       });
     } else {
       await prisma.watchProgress.create({
@@ -38,7 +38,8 @@ export async function POST(req: Request) {
           mediaId,
           episodeId: episodeId || null,
           timestampSec: progressSeconds,
-          isCompleted
+          isCompleted,
+          hiddenFromContinue: false
         }
       });
     }
@@ -59,7 +60,8 @@ export async function GET(req: Request) {
     const progress = await prisma.watchProgress.findMany({
       where: { 
         userId: session.user.id, 
-        isCompleted: false 
+        isCompleted: false,
+        hiddenFromContinue: false
       },
       orderBy: { updatedAt: 'desc' },
       include: { media: true, episode: true },

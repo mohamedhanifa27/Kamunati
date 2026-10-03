@@ -35,7 +35,7 @@ export type AppearancePrefs = {
   updatedAt: string;
   
   // U2 Additions
-  ambient?: { mode: 'live' | 'calm' | 'static' | 'off' };
+  ambient?: { mode: 'live' | 'calm' | 'static' | 'off' | 'predictive' | 'neuform'; speed?: number };
   sounds?: { enabled: boolean; volume: number; onHover: boolean; onScroll: boolean; haptics: boolean };
   myList?: { view: 'grid' | 'list'; sort: 'manual' | 'recent' | 'az' | 'year' };
 };
