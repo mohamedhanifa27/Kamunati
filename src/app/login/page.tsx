@@ -72,7 +72,7 @@ function LoginForm() {
 
       <div className="z-10 flex flex-col items-center w-full max-w-md relative -translate-y-12">
           {/* Logo properly placed above the card */}
-          <div className="mb-8 group cursor-pointer z-50">
+          <div className="mb-8 group cursor-pointer z-50 w-[120px] h-[120px]">
             <LiquidMetalButton variant="play" rendering="colored" diameter={120} strokeWidth={3.0} text="Play" />
           </div>
 
