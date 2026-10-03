@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className="w-64 bg-black border-r border-white/10 flex flex-col z-20">
         <div className="h-16 flex items-center px-6 border-b border-white/10">
-          <img src="/logo.png" alt="Kamunati" className="h-8 object-contain" />
+          <img src="/logo_vector.svg" alt="Kamunati" className="h-8 object-contain" />
           <span className="ml-2 text-xs font-bold text-primary uppercase tracking-widest">Admin</span>
         </div>
         

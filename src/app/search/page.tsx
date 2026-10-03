@@ -59,7 +59,7 @@ export default function SearchPage() {
                     key={media.id} 
                     id={media.id} 
                     title={media.title} 
-                    posterUrl={media.posterPath || media.backdropPath || '/logo.png'} 
+                    posterUrl={media.posterPath || media.backdropPath || '/logo_vector.svg'} 
                   />
                 ))}
               </div>

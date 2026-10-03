@@ -77,8 +77,8 @@ function LoginForm() {
               <div 
                 className="absolute inset-0 z-0 scale-[1.3] group-hover:scale-[1.4] transition-transform duration-500" 
                 style={{
-                  maskImage: "url(/logo.png)",
-                  WebkitMaskImage: "url(/logo.png)",
+                  maskImage: "url(/logo_vector.svg)",
+                  WebkitMaskImage: "url(/logo_vector.svg)",
                   maskSize: "contain",
                   WebkitMaskSize: "contain",
                   maskRepeat: "no-repeat",
@@ -93,7 +93,7 @@ function LoginForm() {
               
               {/* Original logo structure preserved but blended into the liquid metal */}
               <img 
-                src="/logo.png" 
+                src="/logo_vector.svg" 
                 alt="Kamunati" 
                 className="w-full h-full object-contain relative z-10 opacity-60 mix-blend-plus-lighter transition-all duration-300 group-hover:scale-105" 
               />

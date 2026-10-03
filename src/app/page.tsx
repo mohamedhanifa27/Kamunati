@@ -29,7 +29,7 @@ export default function BrowsePage() {
   const myListMapped = safeWatchlistData.map((item: any) => ({
     id: item.media.id,
     title: item.media.title,
-    posterUrl: item.media.posterPath || item.media.backdropPath || '/logo.png',
+    posterUrl: item.media.posterPath || item.media.backdropPath || '/logo_vector.svg',
   }));
 
   const safeMediaList = Array.isArray(mediaList) ? mediaList : [];
@@ -37,7 +37,7 @@ export default function BrowsePage() {
   const trendingMovies = safeMediaList.map((m: any) => ({
     id: m.id,
     title: m.title,
-    posterUrl: m.posterPath || m.backdropPath || '/logo.png',
+    posterUrl: m.posterPath || m.backdropPath || '/logo_vector.svg',
     qualityBadge: m.infoHash ? 'HD' : undefined
   }));
 
@@ -45,7 +45,7 @@ export default function BrowsePage() {
     mediaId: safeMediaList[0].id,
     title: safeMediaList[0].title,
     overview: safeMediaList[0].overview,
-    backdropUrl: safeMediaList[0].backdropPath || safeMediaList[0].posterPath || '/logo.png',
+    backdropUrl: safeMediaList[0].backdropPath || safeMediaList[0].posterPath || '/logo_vector.svg',
   } : {
     mediaId: '1',
     title: 'Welcome to Kamunati',
