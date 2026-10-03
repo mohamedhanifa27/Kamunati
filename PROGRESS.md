@@ -10,7 +10,7 @@
 | B Card Interactions | `feat/b-card-interactions` | ✅ Complete | Lift, banner and sound engine added |
 | C Navigation | `feat/c-navigation` | ✅ Complete | Centered pill, Settings bottom nav |
 | E Profile | `feat/e-profile` | ✅ Complete | Single profile dashboard, APIs |
-| D Settings | — | ⏳ Pending | |
+| D Settings | feat/d-settings | Complete | UI and API routes |
 | F Search Card | — | ⏳ Pending | |
 | G Reviews | — | ⏳ Pending | |
 | H Admin Upgrades | — | ⏳ Pending | |
