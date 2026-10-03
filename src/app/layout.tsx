@@ -10,6 +10,7 @@ import { AmbientProvider } from '../features/ambient';
 import { AmbientDebug } from '../features/ambient/devtools/AmbientDebug';
 import { AmbientSync } from '../features/ambient/AmbientSync';
 import { featureFlags } from '../lib/featureFlags';
+import { SearchCard } from '../components/search/SearchCard';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
@@ -40,6 +41,7 @@ export default function RootLayout({
               <Navbar />
               <MainLayout>{children}</MainLayout>
               <FloatingNavDock />
+              <SearchCard />
             </ThemeProvider>
             <AmbientDebug />
           </AmbientProvider>

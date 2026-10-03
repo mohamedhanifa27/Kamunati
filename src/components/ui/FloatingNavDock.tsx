@@ -11,14 +11,23 @@ import {
 } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import { featureFlags } from "../../lib/featureFlags";
+import { useSearchStore } from "../../store/searchStore";
 
 export function FloatingNavDock() {
   const pathname = usePathname();
+  const { openSearch } = useSearchStore();
   
   // Don't show dock on login page or admin pages
   if (pathname === '/login' || pathname.startsWith('/admin')) {
     return null;
   }
+
+  const handleSearchClick = (e: React.MouseEvent) => {
+    if (featureFlags.searchCard) {
+      e.preventDefault();
+      openSearch();
+    }
+  };
 
   const oldLinks = [
     {
@@ -34,6 +43,7 @@ export function FloatingNavDock() {
         <IconSearch className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
       href: "/search",
+      onClick: handleSearchClick,
     },
     {
       title: "My List",
@@ -68,6 +78,7 @@ export function FloatingNavDock() {
       title: "Search",
       icon: <IconSearch className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
       href: "/search",
+      onClick: handleSearchClick,
     },
     {
       title: "My List",

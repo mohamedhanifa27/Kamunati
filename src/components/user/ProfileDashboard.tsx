@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import { Link } from 'next-view-transitions';
 import { Trash2, X } from 'lucide-react';
 import { featureFlags } from '../../lib/featureFlags';
+import { useSearchStore } from '../../store/searchStore';
 import { useRouter } from 'next/navigation';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
@@ -191,7 +192,7 @@ export default function ProfileDashboard() {
               <h2 className="text-xl font-heading font-bold">Search History</h2>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/search" className="text-sm font-medium hover:text-primary transition-colors">View all</Link>
+              {featureFlags.searchCard ? (<button onClick={() => { const { useSearchStore } = require("../../store/searchStore"); useSearchStore.getState().openSearch() }} className="text-sm font-medium hover:text-primary transition-colors">View all</button>) : (<Link href="/search" className="text-sm font-medium hover:text-primary transition-colors">View all</Link>)}
               <button 
                 onClick={() => setClearing({ type: 'search', title: 'Clear Search History?', count: 5 /* Mock count since search endpoint is stubbed */ })}
                 className="p-2 text-neutral-500 hover:text-red-400 transition-colors bg-white/5 hover:bg-red-500/10 rounded-full"

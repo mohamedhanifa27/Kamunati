@@ -1,6 +1,8 @@
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import { featureFlags } from '../../lib/featureFlags';
+import { useSearchStore } from '../../store/searchStore';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -17,6 +19,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       if (e.key === 'a' && lastKeyRef.current === 'g') {
         // We let the /admin route handle the admin check.
         router.push('/admin');
+      }
+
+      if (e.key === '/' && featureFlags.searchCard) {
+        e.preventDefault();
+        useSearchStore.getState().openSearch();
       }
       
       lastKeyRef.current = e.key;
