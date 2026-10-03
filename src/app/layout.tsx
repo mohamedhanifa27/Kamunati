@@ -3,6 +3,7 @@ import { Inter, Sora, Outfit, Bricolage_Grotesque, Playfair_Display, DM_Sans, Je
 import './globals.css';
 import ThemeProvider from '../components/ThemeProvider';
 import Navbar from '../components/layout/Navbar';
+import { FloatingNavDock } from '../components/ui/FloatingNavDock';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
@@ -27,9 +28,10 @@ export default function RootLayout({
       <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body bg-bg text-text live-gradient`}>
         <ThemeProvider>
           <Navbar />
-          <main className="min-h-screen relative z-10">
+          <main className="min-h-screen relative z-10 pb-24">
             {children}
           </main>
+          <FloatingNavDock />
         </ThemeProvider>
       </body>
     </html>
