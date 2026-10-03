@@ -9,7 +9,7 @@
 | A Ambient | `feat/a-ambient-background` | ✅ Complete | WebGL2 + PI Controller |
 | B Card Interactions | `feat/b-card-interactions` | ✅ Complete | Lift, banner and sound engine added |
 | C Navigation | `feat/c-navigation` | ✅ Complete | Centered pill, Settings bottom nav |
-| E Profile | — | ⏳ Pending | |
+| E Profile | `feat/e-profile` | ✅ Complete | Single profile dashboard, APIs |
 | D Settings | — | ⏳ Pending | |
 | F Search Card | — | ⏳ Pending | |
 | G Reviews | — | ⏳ Pending | |

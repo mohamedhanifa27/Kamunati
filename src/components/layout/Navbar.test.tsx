@@ -18,7 +18,7 @@ vi.mock('../../store/themeStore', () => ({
 describe('Navbar Component', () => {
   beforeEach(() => {
     // Reset flags
-    featureFlags.categoryNav = false;
+    // @ts-ignore`n    featureFlags.categoryNav = false;
   });
 
   it('renders old navigation when flag is OFF', () => {
@@ -28,7 +28,7 @@ describe('Navbar Component', () => {
   });
 
   it('renders exactly three category items when flag is ON', () => {
-    featureFlags.categoryNav = true;
+    // @ts-ignore`n    featureFlags.categoryNav = true;
     render(<Navbar />);
     expect(screen.getByText('Movies')).toBeTruthy();
     expect(screen.getByText('TV Series')).toBeTruthy();

@@ -21,10 +21,6 @@ const nextConfig = {
       {
         source: '/my-list',
         destination: '/list',
-      },
-      {
-        source: '/profile',
-        destination: '/profiles',
       }
     ];
   }

@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'next-view-transitions';
 import { useThemeStore } from '../../store/themeStore';
 import { PlusCircle } from 'lucide-react';
+import { featureFlags } from '../../lib/featureFlags';
+import { useRouter } from 'next/navigation';
 
 const mockProfiles = [
   { id: '1', name: 'Viewer', color: '#F2A33A' },
@@ -12,6 +14,13 @@ const mockProfiles = [
 
 export default function ProfilesPage() {
   const { radius } = useThemeStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (featureFlags.singleProfile) {
+      router.replace('/profile');
+    }
+  }, [router]);
 
   const radiusClass = radius === 'sharp' ? 'rounded-none' : radius === 'soft' ? 'rounded-md' : 'rounded-full';
 

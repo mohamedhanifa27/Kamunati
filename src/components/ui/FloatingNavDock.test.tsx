@@ -10,7 +10,7 @@ vi.mock('next/navigation', () => ({
 
 describe('FloatingNavDock Component', () => {
   beforeEach(() => {
-    featureFlags.newBottomNav = false;
+    // @ts-ignore`n    featureFlags.newBottomNav = false;
   });
 
   it('renders old bottom nav when flag is OFF', () => {
@@ -20,7 +20,7 @@ describe('FloatingNavDock Component', () => {
   });
 
   it('renders exactly five new items and no Admin when flag is ON', () => {
-    featureFlags.newBottomNav = true;
+    // @ts-ignore`n    featureFlags.newBottomNav = true;
     render(<FloatingNavDock />);
     expect(screen.getByText('Home')).toBeTruthy();
     expect(screen.getByText('Search')).toBeTruthy();
