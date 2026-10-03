@@ -32,6 +32,7 @@ RUN npm install -g prisma@5.22.0
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY seed-users.js ./seed-users.js
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
@@ -44,4 +45,4 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss --skip-generate && node server.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss --skip-generate && node seed-users.js && node server.js"]
