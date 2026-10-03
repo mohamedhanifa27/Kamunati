@@ -62,7 +62,7 @@ function LoginForm() {
           variant="predictive"
           mode="dark"
           speed={1.00}
-          hue={280} // Matches Velvet/Hyper Magenta vibe
+          hue={0} // Matches Velvet/Hyper Magenta vibe
           saturation={1.00}
           brightness={1.00}
         />
