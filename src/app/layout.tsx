@@ -3,6 +3,7 @@ import { Inter, Sora, Outfit, Bricolage_Grotesque, Playfair_Display, DM_Sans, Je
 import './globals.css';
 import ThemeProvider from '../components/ThemeProvider';
 import Navbar from '../components/layout/Navbar';
+import MainLayout from '../components/layout/MainLayout';
 import { FloatingNavDock } from '../components/ui/FloatingNavDock';
 import { ViewTransitions } from 'next-view-transitions';
 
@@ -30,9 +31,7 @@ export default function RootLayout({
         <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body bg-bg text-text live-gradient`}>
           <ThemeProvider>
             <Navbar />
-            <main className="min-h-screen relative z-10 pb-24">
-              {children}
-            </main>
+            <MainLayout>{children}</MainLayout>
             <FloatingNavDock />
           </ThemeProvider>
         </body>
