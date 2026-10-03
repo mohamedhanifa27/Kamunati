@@ -1,16 +1,16 @@
 :root {
   /* Default Theme (Midnight Marquee as RGB space-separated) */
-  --c-bg: 14 16 32;
-  --c-bg-elevated: 20 23 48;
-  --c-surface: 23 26 46;
-  --c-surface-raised: 32 36 61;
-  --c-border: 44 49 80;
-  --c-text: 236 234 244;
-  --c-text-muted: 165 163 184;
-  --c-primary: 242 163 58;
-  --c-primary-hover: 247 180 90;
-  --c-text-on-primary: 26 18 4;
-  --c-accent: 92 200 192;
+  --c-bg: 2 6 52;
+  --c-bg-elevated: 5 10 74;
+  --c-surface: 5 10 74;
+  --c-surface-raised: 4 2 195;
+  --c-border: 73 117 254;
+  --c-text: 255 255 255;
+  --c-text-muted: 143 167 255;
+  --c-primary: 94 85 240;
+  --c-primary-hover: 143 167 255;
+  --c-text-on-primary: 255 255 255;
+  --c-accent: 235 158 255;
   --c-success: 91 214 138;
   --c-warning: 242 201 76;
   --c-danger: 255 107 107;

@@ -58,7 +58,9 @@ export default function BrowsePage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg overflow-x-hidden pt-0">
+    <div className="min-h-screen overflow-x-hidden pt-0 relative">
+      {/* Fixed animated space gradient background */}
+      <div className="fixed inset-0 -z-20 live-gradient" />
       <HeroBanner 
         mediaId={featuredMedia.mediaId}
         title={featuredMedia.title}

@@ -41,7 +41,8 @@ body {
 }
 
 .live-gradient {
-  background: linear-gradient(-45deg, #040607, #4928C2, #BF40FA, #5B2A62, #040607);
+  /* Updated Space Gradients based on user-provided palette (Black matter, Planets palette) */
+  background: linear-gradient(-45deg, #050A4A, #0402C3, #5E55F0, #EB9EFF, #8FA7FF, #020634);
   background-size: 400% 400%;
   animation: gradientAnimation 15s ease infinite;
 }
