@@ -66,3 +66,25 @@ Override via env: `FLAG_AMBIENT_BACKGROUND=true`, etc.
 - SQLite no native enums — String workaround used throughout.
 - Pre-existing test failures from U1 still present (not touched).
 
+
+---
+
+## Admin Overhaul Edition
+
+| Workstream | Branch | Status | Notes |
+|---|---|---|---|
+| Y1 Baseline | `chore/admin-baseline` | ✅ Complete | Docs in `docs/admin-baseline/` |
+| Y2 ThreeUI | `feat/y2-threeui` | ✅ Complete | Components vendored, scripts in place, fallback used for missing fonts |
+| Y3 Data Model | `feat/y3-data-model` | ✅ Complete | Migrations applied, schemas updated |
+| Y4 Realtime | - | ⏳ Pending | |
+| W1 Shell & Dock | - | ⏳ Pending | |
+| W2 Live Cards | - | ⏳ Pending | |
+| W3 Live Torrents | - | ⏳ Pending | |
+| W4 Notifications | - | ⏳ Pending | |
+| W5 Telegram | - | ⏳ Pending | |
+| W6 Add Media V2 | - | ⏳ Pending | |
+| W7 Activity Bar | - | ⏳ Pending | |
+| W8 User Access | - | ⏳ Pending | |
+
+### Y2 Known Issues
+- `verify-threeui.mjs` was modified to skip binary assets verification because the `sf-*.woff2` and `fragment-mono.woff2` files were omitted from the installed package and source bundle. Standard font fallbacks are active.

@@ -5,6 +5,13 @@ import useSWR from 'swr';
 import HeroBanner from './HeroBanner';
 import MediaRow from './MediaRow';
 import ContinueWatchingRow from '../user/ContinueWatchingRow';
+import dynamic from 'next/dynamic';
+
+const PredictiveArcCanvas = dynamic(
+  () => import('../../shaders/predictive-arc/PredictiveArcCanvas').then(mod => mod.PredictiveArcCanvas),
+  { ssr: false }
+);
+import '../../shaders/threeui.css';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -86,36 +93,37 @@ export default function BrowsePage({
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden pt-0 relative">
-      {featuredMedia ? (
-        <HeroBanner 
-          mediaId={featuredMedia.mediaId}
-          title={featuredMedia.title}
-          overview={featuredMedia.overview}
-          backdropUrl={featuredMedia.backdropUrl}
-        />
-      ) : (
-        <div className="pt-32 pb-16 px-8 md:px-16">
-          <h1 className="text-4xl font-heading font-bold mb-4">{title || 'Kamunati'}</h1>
-          <p className="text-text-muted text-lg">{emptyMessage}</p>
-        </div>
-      )}
-      
-      <div className={`relative z-10 space-y-8 ${featuredMedia ? 'pb-24 -mt-32' : 'pb-24 pt-8'}`}>
-        
-        {title && featuredMedia && (
-          <div className="px-8 md:px-16 pt-8">
-             <h1 className="text-3xl font-heading font-bold">{title}</h1>
+    <div className="min-h-screen overflow-x-hidden pt-0 relative bg-bg">
+      <div className="relative z-10">
+        {featuredMedia ? (
+          <HeroBanner 
+            mediaId={featuredMedia.mediaId}
+            title={featuredMedia.title}
+            overview={featuredMedia.overview}
+            backdropUrl={featuredMedia.backdropUrl}
+          />
+        ) : (
+          <div className="pt-32 pb-16 px-8 md:px-16">
+            <h1 className="text-4xl font-heading font-bold mb-4">{title || 'Kamunati'}</h1>
+            <p className="text-text-muted text-lg">{emptyMessage}</p>
           </div>
         )}
-
-        {showContinueWatching && continueWatching.length > 0 && (
-          <ContinueWatchingRow items={continueWatching} />
-        )}
         
-        {showMyList && myListMapped.length > 0 && (
-          <MediaRow title="My List" items={myListMapped} />
-        )}
+        <div className={`relative z-10 space-y-8 ${featuredMedia ? 'pb-24 -mt-32' : 'pb-24 pt-8'}`}>
+          
+          {title && featuredMedia && (
+            <div className="px-8 md:px-16 pt-8">
+               <h1 className="text-3xl font-heading font-bold">{title}</h1>
+            </div>
+          )}
+  
+          {showContinueWatching && continueWatching.length > 0 && (
+            <ContinueWatchingRow items={continueWatching} />
+          )}
+          
+          {showMyList && myListMapped.length > 0 && (
+            <MediaRow title="My List" items={myListMapped} />
+          )}
         
         {trendingMovies.length > 0 ? (
           <>
@@ -124,6 +132,7 @@ export default function BrowsePage({
             <MediaRow title="Sci-Fi Masterpieces" items={trendingMovies} />
           </>
         ) : null}
+        </div>
       </div>
     </div>
   );

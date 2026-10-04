@@ -14,7 +14,7 @@ function flag(envKey: string): boolean {
 }
 
 export const featureFlags = {
-  ambientBackground:  flag('FLAG_AMBIENT_BACKGROUND'),
+  ambientBackground:  false, // Turned off per user request
   cardSounds:         flag('FLAG_CARD_SOUNDS'),
   hoverBanner:        flag('FLAG_HOVER_BANNER'),
   categoryNav:        flag('FLAG_CATEGORY_NAV'),
@@ -25,6 +25,22 @@ export const featureFlags = {
   adminUserTools:     flag('FLAG_ADMIN_USER_TOOLS'),
   settingsPage:       flag('FLAG_SETTINGS_PAGE'),
   profilePage:        flag('FLAG_PROFILE_PAGE'),
+  
+  // Admin Overhaul Flags
+  adminRedesign:      false,
+  adminDock:          false,
+  adminRealtime:      false,
+  adminLiveCards:     false,
+  adminTorrentLive:   false,
+  adminAlerts:        false,
+  adminBroadcast:     false,
+  adminTelegram:      false,
+  adminAddMediaV2:    false,
+  adminActivityBar:   false,
+  adminUserAccess:    false,
+  adminPresence:      false,
+  closedSignup:       false,
+  dualLogin:          false,
 } as const;
 
 export type FeatureFlags = typeof featureFlags;

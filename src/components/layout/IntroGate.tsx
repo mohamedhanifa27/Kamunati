@@ -2,11 +2,14 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { GridField } from './GridField';
 
-let hasCompleted = false;
-let isPlaying = false;
+import dynamic from 'next/dynamic';
+import '../../shaders/threeui.css';
 
+const PredictiveArcCanvas = dynamic(
+  () => import('../../shaders/predictive-arc/PredictiveArcCanvas').then(mod => mod.PredictiveArcCanvas), 
+  { ssr: false }
+);
 
 function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -26,7 +29,7 @@ function getProgress(t: number, start: number, end: number, easeFn = easeInOutCu
 
 export function IntroGate() {
   const router = useRouter();
-  const [shouldRender, setShouldRender] = useState(!hasCompleted);
+  const [shouldRender, setShouldRender] = useState(true);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const gridWrapperRef = useRef<HTMLDivElement>(null);
@@ -55,7 +58,7 @@ export function IntroGate() {
   const rMatrixRef = useRef<SVGFEColorMatrixElement>(null);
   const cMatrixRef = useRef<SVGFEColorMatrixElement>(null);
 
-  const [timeProgress, setTimeProgress] = useState(0);
+  
 
   const sessionResolvedRef = useRef(false);
   const sessionActiveRef = useRef(false);
@@ -64,13 +67,6 @@ export function IntroGate() {
   const fallbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (hasCompleted) {
-      setShouldRender(false);
-      return;
-    }
-    
-    isPlaying = true;
-
     document.body.style.overflow = 'hidden';
     const originalPointerEvents = document.body.style.pointerEvents;
     document.body.style.pointerEvents = 'none';
@@ -90,13 +86,14 @@ export function IntroGate() {
 
     const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
-    let startTime = performance.now();
+    let startTime: number | null = null;
     let rafId: number;
 
     const tick = (now: number) => {
+      if (startTime === null) startTime = now;
       const t = now - startTime;
-      const progress = t / 2000;
-      setTimeProgress(progress);
+      const progress = t / 3000;
+      
 
       if (isReducedMotion) {
         if (!reducedMotionSetupRef.current) {
@@ -107,7 +104,7 @@ export function IntroGate() {
           });
           if (gridWrapperRef.current) gridWrapperRef.current.style.opacity = '1';
         }
-        if (t > 400) {
+        if (t > 600) {
            if (!routeTriggeredRef.current) {
              routeTriggeredRef.current = true;
              const dest = sessionActiveRef.current ? (window.location.pathname === '/login' ? '/' : window.location.pathname) : '/login';
@@ -117,11 +114,10 @@ export function IntroGate() {
            }
            
            if (containerRef.current) {
-             const fade = clamp((t - 400) / 400, 0, 1);
+             const fade = clamp((t - 600) / 600, 0, 1);
              containerRef.current.style.opacity = (1 - fade).toString();
            }
-           if (t > 800) {
-             hasCompleted = true;
+           if (t > 1200) {
              document.body.style.overflow = '';
              document.body.style.pointerEvents = originalPointerEvents;
              setShouldRender(false);
@@ -134,35 +130,39 @@ export function IntroGate() {
 
       // 0.00-0.15s grid fade in
       if (gridWrapperRef.current) {
-        const gridFade = clamp(t / 150, 0, 1);
+        const gridFade = clamp(t / 225, 0, 1);
         gridWrapperRef.current.style.opacity = gridFade.toString();
       }
 
       // K grows 0.00-0.35
-      const kStemProg = getProgress(t, 0, 150);
-      const kArmProg = getProgress(t, 150, 350);
+      const kStemProg = getProgress(t, 0, 225);
+      const kArmProg = getProgress(t, 225, 525);
       if (kStemRef.current) kStemRef.current.style.strokeDashoffset = (1 - kStemProg).toString();
       if (kArmRef.current) kArmRef.current.style.strokeDashoffset = (1 - kArmProg).toString();
 
       // Camera pull-back 0.35-1.50
+      let currentScale = 1;
+      let currentTx = 0;
+      if (t <= 525) {
+        const pushIn = getProgress(t, 0, 525);
+        currentScale = 2.2 + (0.15 * pushIn);
+        currentTx = 302;
+      } else {
+        // Use easeOutCubic for a very smooth camera landing
+        const pullBack = getProgress(t, 525, 2250, easeOutCubic);
+        currentScale = 2.35 - (1.35 * pullBack);
+        currentTx = 302 * (1 - pullBack);
+      }
+      
       if (logoWrapperRef.current) {
-        let currentScale = 1;
-        let currentTx = 0;
-        if (t <= 350) {
-          const pushIn = getProgress(t, 0, 350);
-          currentScale = 2.2 + (0.15 * pushIn);
-          currentTx = 302;
-        } else {
-          // Use easeOutCubic for a very smooth camera landing
-          const pullBack = getProgress(t, 350, 1500, easeOutCubic);
-          currentScale = 2.35 - (1.35 * pullBack);
-          currentTx = 302 * (1 - pullBack);
-        }
         logoWrapperRef.current.style.transform = `scale(${currentScale}) translateX(${currentTx}px)`;
+      }
+      if (gridWrapperRef.current) {
+        gridWrapperRef.current.style.transform = `scale(${currentScale}) translateX(${currentTx}px)`;
       }
 
       // Glitch Effect (1.30 to 1.70 seconds)
-      if (t > 1300 && t < 1700) {
+      if (t > 1950 && t < 2550) {
         if (Math.random() > 0.4) {
           const intensity = Math.random();
           
@@ -241,39 +241,39 @@ export function IntroGate() {
       }
 
       // A (top) 0.35-0.50
-      const aTopLegsProg = getProgress(t, 350, 450);
-      const aTopBarProg = getProgress(t, 450, 500);
+      const aTopLegsProg = getProgress(t, 525, 675);
+      const aTopBarProg = getProgress(t, 675, 750);
       if (aTopLegsRef.current) aTopLegsRef.current.style.strokeDashoffset = (1 - aTopLegsProg).toString();
       if (aTopBarRef.current) aTopBarRef.current.style.strokeDashoffset = (1 - aTopBarProg).toString();
 
       // M 0.50-0.80, U 0.65-0.80
-      const mProg = getProgress(t, 500, 800);
-      const uProg = getProgress(t, 650, 800);
+      const mProg = getProgress(t, 750, 1200);
+      const uProg = getProgress(t, 975, 1200);
       if (mRef.current) mRef.current.style.strokeDashoffset = (1 - mProg).toString();
       if (uRef.current) uRef.current.style.strokeDashoffset = (1 - uProg).toString();
 
       // N 0.80-1.15, A (bot) 1.00-1.15
-      const nProg = getProgress(t, 800, 1150);
-      const aBotLegsProg = getProgress(t, 1000, 1100);
-      const aBotBarProg = getProgress(t, 1050, 1150);
+      const nProg = getProgress(t, 1200, 1725);
+      const aBotLegsProg = getProgress(t, 1500, 1650);
+      const aBotBarProg = getProgress(t, 1575, 1725);
       if (nRef.current) nRef.current.style.strokeDashoffset = (1 - nProg).toString();
       if (aBotLegsRef.current) aBotLegsRef.current.style.strokeDashoffset = (1 - aBotLegsProg).toString();
       if (aBotBarRef.current) aBotBarRef.current.style.strokeDashoffset = (1 - aBotBarProg).toString();
 
       // T 1.15-1.50, I 1.35-1.50
-      const tProg = getProgress(t, 1150, 1500);
-      const iProg = getProgress(t, 1350, 1500);
+      const tProg = getProgress(t, 1725, 2250);
+      const iProg = getProgress(t, 2025, 2250);
       if (tRef.current) tRef.current.style.strokeDashoffset = (1 - tProg).toString();
       if (iRef.current) iRef.current.style.strokeDashoffset = (1 - iProg).toString();
 
-      // Exit 1.75-2.00
-      if (t >= 1750) {
-        if (!sessionResolvedRef.current && t < 3000) { // watchdog 3.0s max
+      // Exit 2.62-3.00
+      if (t >= 2625) {
+        if (!sessionResolvedRef.current && t < 4500) { // watchdog 4.5s max
           rafId = requestAnimationFrame(tick);
           return;
         }
         
-        // Trigger routing exactly at 1.75s once
+        // Trigger routing exactly at 2.62s once
         if (!routeTriggeredRef.current) {
           routeTriggeredRef.current = true;
           const dest = sessionActiveRef.current ? (window.location.pathname === '/login' ? '/' : window.location.pathname) : '/login';
@@ -282,22 +282,22 @@ export function IntroGate() {
           }
         }
         
-        const exitProg = getProgress(t, 1750, 2000, easeOutCubic);
+        const exitProg = getProgress(t, 2625, 3000, easeOutCubic);
         if (containerRef.current) {
            containerRef.current.style.opacity = (1 - exitProg).toString();
         }
         
-        if (t >= 2000) {
+        if (t >= 3000) {
           // Remove from DOM
-          hasCompleted = true;
+          
           document.body.style.overflow = '';
           document.body.style.pointerEvents = originalPointerEvents;
           setShouldRender(false);
           return;
         }
-      } else if (t > 3000) {
+      } else if (t > 4500) {
         // Watchdog failsafe
-        hasCompleted = true;
+        
         document.body.style.overflow = '';
         document.body.style.pointerEvents = originalPointerEvents;
         setShouldRender(false);
@@ -312,7 +312,7 @@ export function IntroGate() {
     rafId = requestAnimationFrame(tick);
 
     return () => {
-      isPlaying = false;
+      
       cancelAnimationFrame(rafId);
       document.body.style.overflow = '';
       document.body.style.pointerEvents = originalPointerEvents;
@@ -326,15 +326,26 @@ export function IntroGate() {
     <div 
       ref={containerRef}
       className="fixed inset-0 z-[2147483647] pointer-events-auto flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: '#030303' }}
+      style={{ backgroundColor: '#040607' }}
       aria-hidden="true"
     >
-      <div ref={gridWrapperRef} className="absolute inset-0 opacity-0">
-        <GridField timeProgress={timeProgress} />
+      <div 
+        ref={gridWrapperRef} 
+        className="absolute opacity-0"
+        style={{ top: '-25%', bottom: '-25%', left: '-25%', right: '-25%', transformOrigin: '50% 50%' }}
+      >
+        <PredictiveArcCanvas
+          variant="predictive"
+          mode="dark"
+          speed={1.00}
+          hue={0}
+          saturation={1.00}
+          brightness={1.00}
+        />
       </div>
       
       <div 
-        ref={logoWrapperRef} 
+        ref={logoWrapperRef}  
         className="relative z-10 w-[60vw] min-w-[240px] max-w-[640px]"
         style={{ transformOrigin: '50% 50%' }}
       >

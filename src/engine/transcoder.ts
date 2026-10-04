@@ -1,5 +1,10 @@
 import ffmpeg from 'fluent-ffmpeg';
 import { FastifyReply } from 'fastify';
+import ffmpegPath from 'ffmpeg-static';
+
+if (ffmpegPath) {
+  ffmpeg.setFfmpegPath(ffmpegPath);
+}
 
 export function needsTranscoding(filename: string): boolean {
   const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
@@ -32,10 +37,12 @@ export function streamTranscoded(inputStream: NodeJS.ReadableStream, reply: Fast
 
   const ffStream = command.pipe();
 
-  ffStream.pipe(reply.raw);
-
   reply.raw.on('close', () => {
     command.kill('SIGKILL');
-    (inputStream as any).destroy();
+    if ((inputStream as any).destroy) {
+      (inputStream as any).destroy();
+    }
   });
+
+  return ffStream;
 }

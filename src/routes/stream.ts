@@ -20,26 +20,28 @@ export default async function streamRoutes(fastify: FastifyInstance) {
       const fileSize = file.length;
       const mimeType = mime.lookup(file.name) || 'application/octet-stream';
 
+      if (needsTranscoding(file.name)) {
+        reply.status(200);
+        engine.setStreamPosition(0, file);
+        const stream = file.createReadStream();
+        const ffStream = streamTranscoded(stream, reply);
+        return reply.send(ffStream);
+      }
+
       if (!rangeHeader) {
         reply.status(200);
         reply.header('Accept-Ranges', 'bytes');
         reply.header('Content-Length', fileSize);
         reply.header('Content-Type', mimeType);
 
-        if (needsTranscoding(file.name)) {
-          const stream = file.createReadStream();
-          streamTranscoded(stream, reply);
-          return reply;
-        } else {
-          engine.setStreamPosition(0, file);
-          const stream = file.createReadStream();
-          
-          reply.raw.on('close', () => {
-             (stream as any).destroy();
-          });
-          
-          return reply.send(stream);
-        }
+        engine.setStreamPosition(0, file);
+        const stream = file.createReadStream();
+        
+        reply.raw.on('close', () => {
+           (stream as any).destroy();
+        });
+        
+        return reply.send(stream);
       }
 
       const positions = rangeHeader.replace(/bytes=/, "").split("-");
@@ -55,21 +57,13 @@ export default async function streamRoutes(fastify: FastifyInstance) {
 
       engine.setStreamPosition(start, file);
 
-      if (needsTranscoding(file.name)) {
-          // Transcoding from a specific offset can be tricky with simple pipes,
-          // usually requires time-based seeking, but we start pipe from byte offset.
-          const stream = file.createReadStream({ start, end });
-          streamTranscoded(stream, reply);
-          return reply;
-      } else {
-          const stream = file.createReadStream({ start, end });
-          
-          reply.raw.on('close', () => {
-             (stream as any).destroy();
-          });
+      const stream = file.createReadStream({ start, end });
+      
+      reply.raw.on('close', () => {
+         (stream as any).destroy();
+      });
 
-          return reply.send(stream);
-      }
+      return reply.send(stream);
     } catch (err: any) {
       fastify.log.error(err);
       reply.status(500).send({ error: 'Failed to stream media', details: err.message });

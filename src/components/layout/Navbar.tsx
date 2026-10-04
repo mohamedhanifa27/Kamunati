@@ -5,6 +5,7 @@ import { Search, Bell, User, Palette } from 'lucide-react';
 import { Link } from 'next-view-transitions';
 import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import { featureFlags } from '../../lib/featureFlags';
 import { useThemeStore } from '../../store/themeStore';
 
@@ -74,22 +75,29 @@ export default function Navbar() {
             )}
           </div>
           
-          {!featureFlags.categoryNav && (
-            <div className="flex items-center space-x-6 text-text">
-              <Link href="/search" className="hover:text-primary transition focus:outline-none">
-                <Search size={20} />
-              </Link>
-              <Link href="/settings/appearance" className="hover:text-primary transition focus:outline-none hidden sm:block">
-                <Palette size={20} />
-              </Link>
-              <button className="hover:text-primary transition focus:outline-none hidden sm:block">
-                <Bell size={20} />
-              </button>
-              <Link href="/profiles" className="flex items-center space-x-2 cursor-pointer hover:text-primary transition bg-white/10 p-1.5 rounded-full">
-                <User size={18} />
-              </Link>
-            </div>
-          )}
+          <div className="flex items-center space-x-6 text-text relative z-[70]">
+            <Link href="/search" className="hover:text-primary transition focus:outline-none">
+              <Search size={20} />
+            </Link>
+            <Link href="/settings/appearance" className="hover:text-primary transition focus:outline-none hidden sm:block">
+              <Palette size={20} />
+            </Link>
+            <button className="hover:text-primary transition focus:outline-none hidden sm:block">
+              <Bell size={20} />
+            </button>
+            
+            {/* Added Logout button here since user couldn't find one */}
+            <button 
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="text-xs font-medium text-text-muted hover:text-white transition px-2 py-1 bg-white/5 rounded-md"
+            >
+              Sign out
+            </button>
+
+            <Link href="/profiles" className="flex items-center space-x-2 cursor-pointer hover:text-primary transition bg-white/10 p-1.5 rounded-full">
+              <User size={18} />
+            </Link>
+          </div>
         </div>
       </header>
 
