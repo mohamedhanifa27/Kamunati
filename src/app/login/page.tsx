@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useTransitionRouter } from 'next-view-transitions';
 import { Loader2 } from 'lucide-react';
+import { featureFlags } from '@/lib/featureFlags';
 
 import dynamic from 'next/dynamic';
 
@@ -103,7 +104,7 @@ function LoginForm() {
           <div className="w-full p-8 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl relative">
   
           <h2 className="text-2xl font-bold text-white text-center mb-6">
-          {isSignUp ? 'Create an Account' : 'Welcome Back'}
+          Welcome Back
         </h2>
 
         {error && (
@@ -142,7 +143,7 @@ function LoginForm() {
             disabled={isLoading}
             className="w-full bg-[#BF40FA] hover:bg-[#D685FF] text-white font-bold py-3.5 rounded-lg transition-all active:scale-[0.98] flex items-center justify-center disabled:opacity-70 mt-2 shadow-lg shadow-[#BF40FA]/20"
           >
-            {isLoading ? <Loader2 className="animate-spin" size={20} /> : (isSignUp ? 'Sign Up' : 'Sign In')}
+            {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Sign In'}
           </button>
         </form>
 
@@ -169,15 +170,11 @@ function LoginForm() {
           </button>
         </div>
 
-        <p className="text-center text-white/50 text-sm mt-8">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button 
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-[#D685FF] hover:text-white transition-colors font-medium"
-          >
-            {isSignUp ? 'Sign In' : 'Sign Up'}
-          </button>
-        </p>
+        {featureFlags.dualLogin && (
+          <div className="mt-8 bg-blue-500/10 border border-blue-500/20 text-blue-400 p-4 rounded-lg text-sm text-center">
+            <strong>Notice:</strong> After your first successful password login, you may also sign in securely using Google or GitHub with the same email address.
+          </div>
+        )}
         </div>
       </div>
     </div>
@@ -191,3 +188,5 @@ export default function LoginPage() {
     </Suspense>
   );
 }
+
+
