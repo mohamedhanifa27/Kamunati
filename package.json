@@ -5,6 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "test": "vitest run",
+    "test:integrity": "node scripts/verify-dashboard-integrity.js",
     "test:watch": "vitest",
     "build:engine": "tsc -p tsconfig.server.json",
     "build:ui": "next build",
@@ -86,3 +87,5 @@
     "vitest": "^5.0.3"
   }
 }
+
+

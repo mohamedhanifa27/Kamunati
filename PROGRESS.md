@@ -12,8 +12,8 @@
 | E Profile | `feat/e-profile` | ✅ Complete | Single profile dashboard, APIs |
 | D Settings | feat/d-settings | Complete | UI and API routes |
 | F Search Card | feat/f-search-card | Complete | Overlay card, API integration |
-| G Reviews | — | ⏳ Pending | |
-| H Admin Upgrades | — | ⏳ Pending | |
+| G Reviews | feat/g-reviews | Complete | UI and API routes | |
+| H Admin Upgrades | feat/h-admin | Complete | UI and API routes | |
 
 ---
 
@@ -88,3 +88,4 @@ Override via env: `FLAG_AMBIENT_BACKGROUND=true`, etc.
 
 ### Y2 Known Issues
 - `verify-threeui.mjs` was modified to skip binary assets verification because the `sf-*.woff2` and `fragment-mono.woff2` files were omitted from the installed package and source bundle. Standard font fallbacks are active.
+

@@ -15,7 +15,7 @@ export async function GET(req: Request) {
         id: true,
         email: true,
         role: true,
-        status: true,
+        
         preferences: true,
         createdAt: true,
         lastLoginAt: true,
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
         email,
         passwordHash,
         role: role || 'USER',
-        status: 'ACTIVE',
+        
         preferences: JSON.stringify({ displayName: email.split('@')[0] })
       }
     });
@@ -75,3 +75,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
   }
 }
+
