@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTransitionRouter as useRouter } from 'next-view-transitions';
-import { LayoutDashboard, Clapperboard, Activity, Users, Settings, Search, Bell, LogOut } from 'lucide-react';
+import { LayoutDashboard, Clapperboard, Activity, Users, Settings, Search, Bell, LogOut, MessageSquare } from 'lucide-react';
 import { Link } from 'next-view-transitions';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -34,6 +34,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
           <Link href="/admin/media" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary font-medium">
             <Clapperboard size={20} /> Media Library
+          </Link>
+          <Link href="/admin/reviews" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
+            <MessageSquare size={20} /> Reviews
           </Link>
           <Link href="/admin/torrents" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
             <Activity size={20} /> Torrent Health
@@ -89,3 +92,5 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   );
 }
+
+

@@ -15,19 +15,22 @@ describe('FloatingNavDock Component', () => {
 
   it('renders old bottom nav when flag is OFF', () => {
     render(<FloatingNavDock />);
-    expect(screen.getByText('Admin')).toBeTruthy();
+    expect(document.querySelector('.tabler-icon-settings')).toBeTruthy();
     expect(screen.queryByText('Settings')).toBeNull();
   });
 
   it('renders exactly five new items and no Admin when flag is ON', () => {
     // @ts-ignore`n    featureFlags.newBottomNav = true;
     render(<FloatingNavDock />);
-    expect(screen.getByText('Home')).toBeTruthy();
-    expect(screen.getByText('Search')).toBeTruthy();
-    expect(screen.getByText('My List')).toBeTruthy();
-    expect(screen.getByText('Profile')).toBeTruthy();
-    expect(screen.getByText('Settings')).toBeTruthy();
+    expect(document.querySelector('.tabler-icon-home')).toBeTruthy();
+    expect(document.querySelector('.tabler-icon-search')).toBeTruthy();
+    expect(document.querySelector('.tabler-icon-list-details')).toBeTruthy();
+    expect(document.querySelector('.tabler-icon-user')).toBeTruthy();
+    expect(document.querySelector('.tabler-icon-settings')).toBeTruthy();
     
     expect(screen.queryByText('Admin')).toBeNull();
   });
 });
+
+
+
