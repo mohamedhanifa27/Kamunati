@@ -78,7 +78,7 @@ Override via env: `FLAG_AMBIENT_BACKGROUND=true`, etc.
 | Y3 Data Model | `feat/y3-data-model` | ✅ Complete | Migrations applied, schemas updated |
 | Y4 Realtime | - | ⏳ Pending | |
 | W1 Shell & Dock | - | ⏳ Pending | |
-| W2 Live Cards | - | ⏳ Pending | |
+| W2 Live Cards | feat/h-admin | Complete | Realtime SSE, read-only KPI metrics | |
 | W3 Live Torrents | - | ⏳ Pending | |
 | W4 Notifications | - | ⏳ Pending | |
 | W5 Telegram | - | ⏳ Pending | |
@@ -88,4 +88,5 @@ Override via env: `FLAG_AMBIENT_BACKGROUND=true`, etc.
 
 ### Y2 Known Issues
 - `verify-threeui.mjs` was modified to skip binary assets verification because the `sf-*.woff2` and `fragment-mono.woff2` files were omitted from the installed package and source bundle. Standard font fallbacks are active.
+
 

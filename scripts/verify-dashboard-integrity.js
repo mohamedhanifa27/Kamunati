@@ -3,6 +3,7 @@ const path = require('path');
 
 const DASHBOARD_COMPONENTS = [
   'src/components/admin/LiveDashboardCards.tsx',
+  'src/components/admin/TorrentHealthDashboard.tsx',
   'src/app/admin/page.tsx'
 ];
 

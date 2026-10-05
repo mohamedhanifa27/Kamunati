@@ -29,9 +29,9 @@ export const featureFlags = {
   // Admin Overhaul Flags
   adminRedesign:      false,
   adminDock:          false,
-  adminRealtime:      false,
-  adminLiveCards:     false,
-  adminTorrentLive:   false,
+  adminRealtime:      flag('FLAG_ADMIN_REALTIME'),
+  adminLiveCards:     flag('FLAG_ADMIN_LIVE_CARDS'),
+  adminTorrentLive:   flag('FLAG_ADMIN_TORRENT_LIVE'),
   adminAlerts:        false,
   adminBroadcast:     false,
   adminTelegram:      false,
