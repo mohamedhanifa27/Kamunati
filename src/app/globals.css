@@ -46,3 +46,46 @@ body {
   background-size: 400% 400%;
   animation: gradientAnimation 15s ease infinite;
 }
+
+:root {
+  --halo-indigo-200: #c7d2fe;
+  --halo-indigo-300: #a5b4fc;
+  --halo-indigo-400: #818cf8;
+  --halo-indigo-500: #6366f1;
+  --halo-indigo-600: #4f46e5;
+  --halo-indigo-700: #4338ca;
+  --halo-indigo-800: #3730a3;
+  --halo-indigo-live: linear-gradient(90deg, #4338ca, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1, #4338ca);
+  --halo-indigo-live-v: linear-gradient(180deg, #4338ca, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1, #4338ca);
+}
+
+@keyframes halo-indigo-flow {
+  from { background-position-x: 0%; }
+  to { background-position-x: 200%; }
+}
+
+@keyframes halo-indigo-flow-v {
+  from { background-position-y: 0%; }
+  to { background-position-y: 200%; }
+}
+
+.halo-indigo-live {
+  background-image: var(--halo-indigo-live);
+  background-size: 200% 100%;
+  background-repeat: repeat-x;
+  animation: halo-indigo-flow 4s linear infinite;
+}
+
+.halo-indigo-live-v {
+  background-image: var(--halo-indigo-live-v);
+  background-size: 100% 200%;
+  background-repeat: repeat-y;
+  animation: halo-indigo-flow-v 4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halo-indigo-live, .halo-indigo-live-v {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 
 /** Ambient gradient (pill indicator glow) — same hue family as `HaloCardBorderTrail`. */
 const TAB_GRADIENT_GLOW =
-  "linear-gradient(90deg, transparent 0%, rgba(255,0,128,0.35) 22%, rgba(121,40,202,0.45) 50%, rgba(0,212,255,0.38) 78%, transparent 100%)"
+  "linear-gradient(90deg, transparent 0%, rgba(129,140,248,0.35) 22%, rgba(79,70,229,0.45) 50%, rgba(165,180,252,0.38) 78%, transparent 100%)"
 
 export type HaloTabsVariant = "underline" | "pill"
 
@@ -94,7 +94,7 @@ export function HaloTabsIndicator({
       className={cn(
         "pointer-events-none absolute z-0",
         variant === "underline" &&
-          "-bottom-px left-(--active-tab-left) h-0.5 w-(--active-tab-width) rounded-none shadow-[0_0_12px_rgba(121,40,202,0.35),0_0_24px_rgba(0,212,255,0.2)] transition-[left,width] duration-300 ease-out [background:linear-gradient(90deg,transparent_0%,rgba(255,0,128,0.85)_18%,rgba(121,40,202,0.92)_50%,rgba(0,212,255,0.88)_82%,transparent_100%)] motion-reduce:transition-none",
+          "-bottom-px left-(--active-tab-left) h-0.5 w-(--active-tab-width) rounded-none shadow-[0_0_12px_rgba(79,70,229,0.35),0_0_24px_rgba(165,180,252,0.2)] transition-[left,width] duration-300 ease-out halo-indigo-live [mask-image:linear-gradient(90deg,transparent_0%,#000_18%,#000_82%,transparent_100%)] motion-reduce:transition-none",
         variant === "pill" &&
           "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width) rounded-full transition-[left,width,top,height] duration-300 ease-out motion-reduce:transition-none",
         className
@@ -122,7 +122,7 @@ export function HaloTabsIndicator({
           className="pointer-events-none absolute inset-0 rounded-full opacity-90"
           style={{
             background:
-              "linear-gradient(90deg, rgba(255,0,128,0.2), rgba(121,40,202,0.28), rgba(0,212,255,0.22))",
+              "linear-gradient(90deg, rgba(129,140,248,0.2), rgba(79,70,229,0.28), rgba(165,180,252,0.22))",
             mixBlendMode: "multiply",
           }}
         />

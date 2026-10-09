@@ -47,9 +47,9 @@ const RIM_BLOB_GRADIENTS: Record<
   { primaryBg: string; secondaryBg: string; tertiaryBg: string }
 > = {
   default: {
-    primaryBg: "linear-gradient(90deg, #ff0080, #7928ca, #00d4ff, #0070f3)",
-    secondaryBg: "linear-gradient(90deg, #ff4d4d, #f9cb28, #ff0080)",
-    tertiaryBg: "linear-gradient(90deg, #0070f3, #00d4ff, #7928ca)",
+    primaryBg: "linear-gradient(90deg, #818cf8, #4f46e5, #a5b4fc, #4338ca)",
+    secondaryBg: "linear-gradient(90deg, #6366f1, #a5b4fc, #818cf8)",
+    tertiaryBg: "linear-gradient(90deg, #4338ca, #a5b4fc, #4f46e5)",
   },
   success: {
     primaryBg:
@@ -75,13 +75,13 @@ interface BorderTrailChrome {
 const RIM_BORDER_TRAIL: Record<RimVariant, BorderTrailChrome> = {
   default: {
     ambientGradient:
-      "linear-gradient(90deg, transparent 0%, rgba(255,0,128,0) 6%, rgba(255,0,128,0.38) 24%, rgba(121,40,202,0.5) 50%, rgba(0,212,255,0.42) 76%, rgba(0,212,255,0) 94%, transparent 100%)",
+      "linear-gradient(90deg, transparent 0%, rgba(129,140,248,0) 6%, rgba(129,140,248,0.38) 24%, rgba(79,70,229,0.5) 50%, rgba(165,180,252,0.42) 76%, rgba(165,180,252,0) 94%, transparent 100%)",
     coreGradient:
-      "linear-gradient(90deg, transparent 0%, rgba(255,0,128,0.72) 20%, rgba(200,140,255,0.92) 50%, rgba(0,212,255,0.78) 80%, transparent 100%)",
+      "linear-gradient(90deg, transparent 0%, rgba(129,140,248,0.72) 20%, rgba(199,210,254,0.92) 50%, rgba(165,180,252,0.78) 80%, transparent 100%)",
     ambientGlow:
-      "0 0 22px rgba(121,40,202,0.28), 0 0 44px rgba(0,212,255,0.18), 0 0 2px rgba(255,255,255,0.12)",
+      "0 0 22px rgba(79,70,229,0.28), 0 0 44px rgba(165,180,252,0.18), 0 0 2px rgba(255,255,255,0.12)",
     coreGlow:
-      "0 0 14px rgba(255,0,128,0.35), 0 0 28px rgba(0,212,255,0.32), inset 0 0 1px rgba(255,255,255,0.22)",
+      "0 0 14px rgba(129,140,248,0.35), 0 0 28px rgba(165,180,252,0.32), inset 0 0 1px rgba(255,255,255,0.22)",
   },
   success: {
     ambientGradient:
