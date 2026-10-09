@@ -147,6 +147,7 @@ export default function VideoPlayer({ src, infoHash, mediaId, title }: VideoPlay
             volume={state.volume}
             isMuted={state.isMuted}
             isFullscreen={state.isFullscreen}
+            isBuffering={state.isBuffering}
             p2pPieces={swarmStats?.downloadedPieces || []}
             browserBuffered={videoRef.current?.buffered || null}
             onPlayPause={togglePlay}

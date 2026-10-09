@@ -8,6 +8,7 @@ interface VideoPlayerState {
   isMuted: boolean;
   isFullscreen: boolean;
   playbackRate: number;
+  isBuffering: boolean;
 }
 
 export function useVideoPlayer(videoRef: RefObject<HTMLVideoElement | null>, containerRef: RefObject<HTMLDivElement | null>) {
@@ -19,6 +20,7 @@ export function useVideoPlayer(videoRef: RefObject<HTMLVideoElement | null>, con
     isMuted: false,
     isFullscreen: false,
     playbackRate: 1,
+    isBuffering: true, // starts loading
   });
 
   useEffect(() => {
@@ -29,12 +31,18 @@ export function useVideoPlayer(videoRef: RefObject<HTMLVideoElement | null>, con
       setState(prev => ({ ...prev, ...updates }));
     };
 
-    const onPlay = () => updateState({ isPlaying: true });
+    const onPlay = () => updateState({ isPlaying: true, isBuffering: false });
     const onPause = () => updateState({ isPlaying: false });
     const onTimeUpdate = () => updateState({ currentTime: video.currentTime });
-    const onLoadedMetadata = () => updateState({ duration: video.duration });
+    const onLoadedMetadata = () => updateState({ duration: video.duration, isBuffering: false });
     const onVolumeChange = () => updateState({ volume: video.volume, isMuted: video.muted });
     const onRateChange = () => updateState({ playbackRate: video.playbackRate });
+
+    const onWaiting = () => updateState({ isBuffering: true });
+    const onCanPlay = () => updateState({ isBuffering: false });
+    const onPlaying = () => updateState({ isBuffering: false });
+    const onSeeking = () => updateState({ isBuffering: true });
+    const onSeeked = () => updateState({ isBuffering: false });
 
     video.addEventListener('play', onPlay);
     video.addEventListener('pause', onPause);
@@ -42,6 +50,13 @@ export function useVideoPlayer(videoRef: RefObject<HTMLVideoElement | null>, con
     video.addEventListener('loadedmetadata', onLoadedMetadata);
     video.addEventListener('volumechange', onVolumeChange);
     video.addEventListener('ratechange', onRateChange);
+    
+    video.addEventListener('waiting', onWaiting);
+    video.addEventListener('stalled', onWaiting);
+    video.addEventListener('canplay', onCanPlay);
+    video.addEventListener('playing', onPlaying);
+    video.addEventListener('seeking', onSeeking);
+    video.addEventListener('seeked', onSeeked);
 
     const onFullscreenChange = () => {
       updateState({ isFullscreen: !!document.fullscreenElement });
@@ -55,6 +70,14 @@ export function useVideoPlayer(videoRef: RefObject<HTMLVideoElement | null>, con
       video.removeEventListener('loadedmetadata', onLoadedMetadata);
       video.removeEventListener('volumechange', onVolumeChange);
       video.removeEventListener('ratechange', onRateChange);
+      
+      video.removeEventListener('waiting', onWaiting);
+      video.removeEventListener('stalled', onWaiting);
+      video.removeEventListener('canplay', onCanPlay);
+      video.removeEventListener('playing', onPlaying);
+      video.removeEventListener('seeking', onSeeking);
+      video.removeEventListener('seeked', onSeeked);
+      
       document.removeEventListener('fullscreenchange', onFullscreenChange);
     };
   }, [videoRef]);

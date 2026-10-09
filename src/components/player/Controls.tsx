@@ -10,6 +10,7 @@ interface ControlsProps {
   volume: number;
   isMuted: boolean;
   isFullscreen: boolean;
+  isBuffering: boolean;
   p2pPieces: BufferedRange[];
   browserBuffered: TimeRanges | null;
   onPlayPause: () => void;
@@ -23,7 +24,7 @@ interface ControlsProps {
 }
 
 export default function Controls({
-  isPlaying, currentTime, duration, volume, isMuted, isFullscreen, p2pPieces, browserBuffered,
+  isPlaying, currentTime, duration, volume, isMuted, isFullscreen, isBuffering, p2pPieces, browserBuffered,
   onPlayPause, onSeek, onVolumeChange, onMuteToggle, onFullscreenToggle, onSeekBack, onSeekForward, onToggleSettings
 }: ControlsProps) {
 
@@ -42,6 +43,7 @@ export default function Controls({
       <P2PScrubber 
         currentTime={currentTime} 
         duration={duration} 
+        isBuffering={isBuffering}
         p2pPieces={p2pPieces} 
         browserBuffered={browserBuffered}
         onSeek={onSeek}
