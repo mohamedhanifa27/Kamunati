@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { featureFlags } from '../../lib/featureFlags';
 import { useThemeStore } from '../../store/themeStore';
+import { HaloTabs, HaloTabsList, HaloTabsTrigger, HaloTabsIndicator } from '../ui/halo-tabs';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -107,40 +108,23 @@ export default function Navbar() {
           className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] pointer-events-none"
           style={{ zIndex: 'var(--z-top-nav, 60)' }}
         >
-          <div 
-            ref={pillRef}
-            onKeyDown={handleKeyDown}
-            className={`pointer-events-auto flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-full shadow-lg transition-all duration-300 ${isScrolled ? 'p-1' : 'p-1.5'}`}
-            role="navigation"
-            aria-label="Category Navigation"
-          >
-            {categories.map((cat, idx) => {
-              const isActive = idx === activeCategoryIndex;
-              return (
-                <Link 
-                  key={cat.path} 
-                  href={cat.path}
-                  className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${isActive ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'}`}
-                >
-                  <span className="relative z-10">{cat.name}</span>
-                  {isActive && motionLevel !== 'off' && motionLevel !== 'minimal' && (
-                    <motion.div 
-                      layoutId="category-pill-highlight"
-                      className="absolute inset-0 bg-white/15 rounded-full"
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      style={{ zIndex: 0 }}
-                    />
-                  )}
-                  {isActive && motionLevel === 'minimal' && (
-                    <div className="absolute inset-0 bg-white/15 rounded-full animate-fade-in" style={{ zIndex: 0 }} />
-                  )}
-                  {isActive && motionLevel === 'off' && (
-                    <div className="absolute inset-0 bg-white/15 rounded-full" style={{ zIndex: 0 }} />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
+          <nav aria-label="Category Navigation" className="pointer-events-auto flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-full shadow-lg p-1">
+            <HaloTabs value={pathname} onValueChange={(v: string) => router.push(v)} className="w-auto">
+              <HaloTabsList variant="underline" className="gap-2 border-none">
+                {categories.map((cat) => (
+                  <HaloTabsTrigger 
+                    key={cat.path} 
+                    value={cat.path}
+                    className="relative px-4 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/50 text-neutral-400 data-active:text-white"
+                  >
+                    <Link href={cat.path} className="absolute inset-0 z-10" aria-label={cat.name} />
+                    <span className="relative z-0">{cat.name}</span>
+                  </HaloTabsTrigger>
+                ))}
+                <HaloTabsIndicator variant="underline" />
+              </HaloTabsList>
+            </HaloTabs>
+          </nav>
         </div>
       )}
     </>

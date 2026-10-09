@@ -12,6 +12,8 @@ import {
 import { usePathname } from "next/navigation";
 import { featureFlags } from "../../lib/featureFlags";
 import { useSearchStore } from "../../store/searchStore";
+import { HaloTabs, HaloTabsList, HaloTabsTrigger, HaloTabsIndicator } from "./halo-tabs";
+import { Link } from "next-view-transitions";
 
 export function FloatingNavDock() {
   const pathname = usePathname();
@@ -100,12 +102,30 @@ export function FloatingNavDock() {
   const activeLinks = featureFlags.newBottomNav ? newLinks : oldLinks;
 
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-      <FloatingDock
-        items={activeLinks}
-        desktopClassName="bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl"
-        mobileClassName="bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl"
-      />
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-[400px]">
+      <nav aria-label="Bottom Navigation" className="w-full bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-1 pointer-events-auto">
+        <HaloTabs value={pathname} onValueChange={(v: string) => {}} className="w-full">
+          <HaloTabsList variant="underline" className="w-full gap-0 justify-around border-none">
+            {activeLinks.map((link) => (
+              <HaloTabsTrigger
+                key={link.href}
+                value={link.href}
+                className="relative flex-1 flex flex-col items-center py-2 gap-1 outline-none text-neutral-400 data-active:text-white"
+              >
+                <Link 
+                  href={link.href} 
+                  className="absolute inset-0 z-10" 
+                  aria-label={link.title}
+                  onClick={link.onClick}
+                />
+                <div className="w-5 h-5 relative z-0">{link.icon}</div>
+                <span className="text-[10px] font-medium relative z-0">{link.title}</span>
+              </HaloTabsTrigger>
+            ))}
+            <HaloTabsIndicator variant="underline" />
+          </HaloTabsList>
+        </HaloTabs>
+      </nav>
     </div>
   );
 }

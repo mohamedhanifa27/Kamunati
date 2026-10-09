@@ -2,11 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTransitionRouter as useRouter } from 'next-view-transitions';
+import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Clapperboard, Activity, Users, Settings, Search, Bell, LogOut, MessageSquare } from 'lucide-react';
 import { Link } from 'next-view-transitions';
+import { HaloTabs, HaloTabsList, HaloTabsTrigger, HaloTabsIndicator } from '../../components/ui/halo-tabs';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
@@ -28,25 +31,41 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="ml-2 text-xs font-bold text-primary uppercase tracking-widest">Admin</span>
         </div>
         
-        <nav className="flex-1 py-6 flex flex-col gap-2 px-4">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
-            <LayoutDashboard size={20} /> Dashboard
-          </Link>
-          <Link href="/admin/media" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary font-medium">
-            <Clapperboard size={20} /> Media Library
-          </Link>
-          <Link href="/admin/reviews" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
-            <MessageSquare size={20} /> Reviews
-          </Link>
-          <Link href="/admin/torrents" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
-            <Activity size={20} /> Torrent Health
-          </Link>
-          <Link href="/admin/users" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
-            <Users size={20} /> Users
-          </Link>
-          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 text-white/70 hover:text-white transition-colors">
-            <Settings size={20} /> Settings
-          </Link>
+        <nav className="flex-1 py-6 px-4">
+          <HaloTabs value={pathname} onValueChange={(v: string) => router.push(v)} orientation="vertical" className="h-full">
+            <HaloTabsList variant="underline" className="flex flex-col gap-2 border-none">
+              <HaloTabsTrigger value="/admin" className="relative flex items-center justify-start gap-3 px-4 py-3 rounded-lg text-white/70 data-active:text-primary data-active:bg-primary/10 transition-colors outline-none text-left">
+                <Link href="/admin" className="absolute inset-0 z-10" aria-label="Dashboard" />
+                <LayoutDashboard size={20} className="relative z-0" /> <span className="relative z-0 font-medium">Dashboard</span>
+              </HaloTabsTrigger>
+              <HaloTabsTrigger value="/admin/media" className="relative flex items-center justify-start gap-3 px-4 py-3 rounded-lg text-white/70 data-active:text-primary data-active:bg-primary/10 transition-colors outline-none text-left">
+                <Link href="/admin/media" className="absolute inset-0 z-10" aria-label="Media Library" />
+                <Clapperboard size={20} className="relative z-0" /> <span className="relative z-0 font-medium">Media Library</span>
+              </HaloTabsTrigger>
+              <HaloTabsTrigger value="/admin/reviews" className="relative flex items-center justify-start gap-3 px-4 py-3 rounded-lg text-white/70 data-active:text-primary data-active:bg-primary/10 transition-colors outline-none text-left">
+                <Link href="/admin/reviews" className="absolute inset-0 z-10" aria-label="Reviews" />
+                <MessageSquare size={20} className="relative z-0" /> <span className="relative z-0 font-medium">Reviews</span>
+              </HaloTabsTrigger>
+              <HaloTabsTrigger value="/admin/torrents" className="relative flex items-center justify-start gap-3 px-4 py-3 rounded-lg text-white/70 data-active:text-primary data-active:bg-primary/10 transition-colors outline-none text-left">
+                <Link href="/admin/torrents" className="absolute inset-0 z-10" aria-label="Torrent Health" />
+                <Activity size={20} className="relative z-0" /> <span className="relative z-0 font-medium">Torrent Health</span>
+              </HaloTabsTrigger>
+              <HaloTabsTrigger value="/admin/users" className="relative flex items-center justify-start gap-3 px-4 py-3 rounded-lg text-white/70 data-active:text-primary data-active:bg-primary/10 transition-colors outline-none text-left">
+                <Link href="/admin/users" className="absolute inset-0 z-10" aria-label="Users" />
+                <Users size={20} className="relative z-0" /> <span className="relative z-0 font-medium">Users</span>
+              </HaloTabsTrigger>
+              <HaloTabsTrigger value="/admin/settings" className="relative flex items-center justify-start gap-3 px-4 py-3 rounded-lg text-white/70 data-active:text-primary data-active:bg-primary/10 transition-colors outline-none text-left">
+                <Link href="/admin/settings" className="absolute inset-0 z-10" aria-label="Settings" />
+                <Settings size={20} className="relative z-0" /> <span className="relative z-0 font-medium">Settings</span>
+              </HaloTabsTrigger>
+
+              <HaloTabsIndicator 
+                variant="underline" 
+                className="top-(--active-tab-top) bottom-auto left-0 h-(--active-tab-height) w-0.5 transition-[top,height] duration-300 ease-out halo-indigo-live-v !shadow-[0_0_12px_rgba(79,70,229,0.35)] !mask-none" 
+                style={{ WebkitMaskImage: 'none', maskImage: 'none', background: 'none' }}
+              />
+            </HaloTabsList>
+          </HaloTabs>
         </nav>
         
         <div className="p-4 border-t border-white/10">
