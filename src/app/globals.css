@@ -57,6 +57,8 @@ body {
   --halo-indigo-800: #3730a3;
   --halo-indigo-live: linear-gradient(90deg, #4338ca, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1, #4338ca);
   --halo-indigo-live-v: linear-gradient(180deg, #4338ca, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1, #4338ca);
+  --halo-violet-live: linear-gradient(90deg, rgba(255,0,128,0.85), rgba(121,40,202,0.92), rgba(0,212,255,0.88), rgba(121,40,202,0.92), rgba(255,0,128,0.85));
+  --halo-violet-live-v: linear-gradient(180deg, rgba(255,0,128,0.85), rgba(121,40,202,0.92), rgba(0,212,255,0.88), rgba(121,40,202,0.92), rgba(255,0,128,0.85));
 }
 
 @keyframes halo-indigo-flow {
@@ -76,6 +78,20 @@ body {
   animation: halo-indigo-flow 4s linear infinite;
 }
 
+.halo-violet-live {
+  background-image: var(--halo-violet-live);
+  background-size: 200% 100%;
+  background-repeat: repeat-x;
+  animation: halo-indigo-flow 4s linear infinite;
+}
+
+.halo-violet-live-v {
+  background-image: var(--halo-violet-live-v);
+  background-size: 100% 200%;
+  background-repeat: repeat-y;
+  animation: halo-indigo-flow-v 4s linear infinite;
+}
+
 .halo-indigo-live-v {
   background-image: var(--halo-indigo-live-v);
   background-size: 100% 200%;
@@ -84,7 +100,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .halo-indigo-live, .halo-indigo-live-v {
+  .halo-indigo-live, .halo-indigo-live-v, .halo-violet-live, .halo-violet-live-v {
     animation: none;
     background-position: 50% 50%;
   }

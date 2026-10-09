@@ -94,7 +94,7 @@ export function HaloTabsIndicator({
       className={cn(
         "pointer-events-none absolute z-0",
         variant === "underline" &&
-          "-bottom-px left-(--active-tab-left) h-0.5 w-(--active-tab-width) rounded-none shadow-[0_0_12px_rgba(79,70,229,0.35),0_0_24px_rgba(165,180,252,0.2)] transition-[left,width] duration-300 ease-out halo-indigo-live [mask-image:linear-gradient(90deg,transparent_0%,#000_18%,#000_82%,transparent_100%)] motion-reduce:transition-none",
+          "-bottom-px left-(--active-tab-left) h-0.5 w-(--active-tab-width) rounded-none shadow-[0_0_12px_rgba(121,40,202,0.35),0_0_24px_rgba(0,212,255,0.2)] transition-[left,width] duration-300 ease-out halo-violet-live [mask-image:linear-gradient(90deg,transparent_0%,#000_18%,#000_82%,transparent_100%)] motion-reduce:transition-none",
         variant === "pill" &&
           "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width) rounded-full transition-[left,width,top,height] duration-300 ease-out motion-reduce:transition-none",
         className

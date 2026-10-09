@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { FloatingDock } from "./floating-dock";
 import {
   IconHome,
@@ -18,6 +18,7 @@ import { Link } from "next-view-transitions";
 export function FloatingNavDock() {
   const pathname = usePathname();
   const { openSearch } = useSearchStore();
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
   
   // Don't show dock on login page or admin pages
   if (pathname === '/login' || pathname.startsWith('/admin')) {
@@ -103,13 +104,18 @@ export function FloatingNavDock() {
 
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-[400px]">
-      <nav aria-label="Bottom Navigation" className="w-full bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-1 pointer-events-auto">
-        <HaloTabs value={pathname} onValueChange={(v: string) => {}} className="w-full">
+      <nav 
+        aria-label="Bottom Navigation" 
+        className="w-full bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-1 pointer-events-auto"
+        onMouseLeave={() => setHoveredPath(null)}
+      >
+        <HaloTabs value={hoveredPath || pathname} onValueChange={(v: string) => {}} className="w-full">
           <HaloTabsList variant="underline" className="w-full gap-0 justify-around border-none">
             {activeLinks.map((link) => (
               <HaloTabsTrigger
                 key={link.href}
                 value={link.href}
+                onMouseEnter={() => setHoveredPath(link.href)}
                 className="relative flex-1 flex flex-col items-center py-2 gap-1 outline-none text-neutral-400 data-active:text-white"
               >
                 <Link 

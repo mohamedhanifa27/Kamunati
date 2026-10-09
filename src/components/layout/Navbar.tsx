@@ -17,6 +17,7 @@ export default function Navbar() {
   const { motionLevel } = useThemeStore();
 
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(-1);
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
   const categories = [
     { name: 'Movies', path: '/movies' },
     { name: 'TV Series', path: '/series' },
@@ -108,13 +109,18 @@ export default function Navbar() {
           className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] pointer-events-none"
           style={{ zIndex: 'var(--z-top-nav, 60)' }}
         >
-          <nav aria-label="Category Navigation" className="pointer-events-auto flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-full shadow-lg p-1">
-            <HaloTabs value={pathname} onValueChange={(v: string) => router.push(v)} className="w-auto">
+          <nav 
+            aria-label="Category Navigation" 
+            className="pointer-events-auto flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-full shadow-lg p-1"
+            onMouseLeave={() => setHoveredPath(null)}
+          >
+            <HaloTabs value={hoveredPath || pathname} onValueChange={(v: string) => router.push(v)} className="w-auto">
               <HaloTabsList variant="underline" className="gap-2 border-none">
                 {categories.map((cat) => (
                   <HaloTabsTrigger 
                     key={cat.path} 
                     value={cat.path}
+                    onMouseEnter={() => setHoveredPath(cat.path)}
                     className="relative px-4 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/50 text-neutral-400 data-active:text-white"
                   >
                     <Link href={cat.path} className="absolute inset-0 z-10" aria-label={cat.name} />
