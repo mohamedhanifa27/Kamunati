@@ -62,7 +62,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
               <HaloTabsIndicator 
                 variant="underline" 
-                className="top-(--active-tab-top) bottom-auto left-0 h-(--active-tab-height) w-0.5 transition-[top,height] duration-300 ease-out halo-violet-live-v !shadow-[0_0_12px_rgba(121,40,202,0.35)] !mask-none" 
+                className="top-[var(--active-tab-top)] bottom-auto left-0 h-[var(--active-tab-height)] w-0.5 transition-[top,height] duration-300 ease-out halo-violet-live-v !shadow-[0_0_12px_rgba(80,26,150,0.6)] !mask-none" 
                 style={{ WebkitMaskImage: 'none', maskImage: 'none', background: 'none' }}
               />
             </HaloTabsList>

@@ -55,10 +55,10 @@ body {
   --halo-indigo-600: #4f46e5;
   --halo-indigo-700: #4338ca;
   --halo-indigo-800: #3730a3;
-  --halo-indigo-live: linear-gradient(90deg, #4338ca, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1, #4338ca);
-  --halo-indigo-live-v: linear-gradient(180deg, #4338ca, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1, #4338ca);
-  --halo-violet-live: linear-gradient(90deg, rgba(255,0,128,0.85), rgba(121,40,202,0.92), rgba(0,212,255,0.88), rgba(121,40,202,0.92), rgba(255,0,128,0.85));
-  --halo-violet-live-v: linear-gradient(180deg, rgba(255,0,128,0.85), rgba(121,40,202,0.92), rgba(0,212,255,0.88), rgba(121,40,202,0.92), rgba(255,0,128,0.85));
+  --halo-indigo-live: linear-gradient(90deg, #501A96, #108AC2, #501A96, #108AC2, #501A96);
+  --halo-indigo-live-v: linear-gradient(180deg, #501A96, #108AC2, #501A96, #108AC2, #501A96);
+  --halo-violet-live: linear-gradient(90deg, #501A96, #108AC2, #501A96, #108AC2, #501A96);
+  --halo-violet-live-v: linear-gradient(180deg, #501A96, #108AC2, #501A96, #108AC2, #501A96);
 }
 
 @keyframes halo-indigo-flow {

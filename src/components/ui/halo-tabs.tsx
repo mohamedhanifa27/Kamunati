@@ -94,9 +94,9 @@ export function HaloTabsIndicator({
       className={cn(
         "pointer-events-none absolute z-0",
         variant === "underline" &&
-          "-bottom-px left-(--active-tab-left) h-0.5 w-(--active-tab-width) rounded-none shadow-[0_0_12px_rgba(121,40,202,0.35),0_0_24px_rgba(0,212,255,0.2)] transition-[left,width] duration-300 ease-out halo-violet-live [mask-image:linear-gradient(90deg,transparent_0%,#000_18%,#000_82%,transparent_100%)] motion-reduce:transition-none",
+          "-bottom-px left-[var(--active-tab-left)] h-0.5 w-[var(--active-tab-width)] rounded-none shadow-[0_0_12px_rgba(80,26,150,0.6),0_0_24px_rgba(16,138,194,0.4)] transition-[left,width] duration-300 ease-out halo-violet-live [mask-image:linear-gradient(90deg,transparent_0%,#000_18%,#000_82%,transparent_100%)] motion-reduce:transition-none",
         variant === "pill" &&
-          "top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width) rounded-full transition-[left,width,top,height] duration-300 ease-out motion-reduce:transition-none",
+          "top-[var(--active-tab-top)] left-[var(--active-tab-left)] h-[var(--active-tab-height)] w-[var(--active-tab-width)] rounded-full transition-[left,width,top,height] duration-300 ease-out motion-reduce:transition-none",
         className
       )}
       data-slot="halo-tabs-indicator"
@@ -112,7 +112,7 @@ export function HaloTabsIndicator({
           )}
           style={{
             background:
-              "linear-gradient(to bottom, color-mix(in oklch, var(--card) 88%, transparent), color-mix(in oklch, var(--card) 72%, transparent))",
+              "linear-gradient(to bottom, color-mix(in oklch, var(--surface, #111) 88%, transparent), color-mix(in oklch, var(--surface, #111) 72%, transparent))",
           }}
         />
       ) : null}
@@ -122,7 +122,7 @@ export function HaloTabsIndicator({
           className="pointer-events-none absolute inset-0 rounded-full opacity-90"
           style={{
             background:
-              "linear-gradient(90deg, rgba(129,140,248,0.2), rgba(79,70,229,0.28), rgba(165,180,252,0.22))",
+              "linear-gradient(90deg, rgba(80,26,150,0.3), rgba(16,138,194,0.35), rgba(80,26,150,0.3))",
             mixBlendMode: "multiply",
           }}
         />
