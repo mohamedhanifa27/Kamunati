@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X, DownloadCloud, Loader2 } from 'lucide-react';
+import { useNotification } from '../ui/NotificationProvider';
 
 interface TMDBResult {
   id: number;
@@ -20,6 +21,7 @@ interface TMDBImportModalProps {
 }
 
 export default function TMDBImportModal({ isOpen, onClose, onImportSuccess }: TMDBImportModalProps) {
+  const { notify } = useNotification();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<TMDBResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -77,7 +79,7 @@ export default function TMDBImportModal({ isOpen, onClose, onImportSuccess }: TM
         onImportSuccess(data);
         onClose();
       } else {
-        alert('Failed to import media from TMDB. Make sure the backend API is running.');
+        notify('Error', 'Failed to import media from TMDB. Make sure the backend API is running.', 'destructive');
       }
     } catch (err) {
       console.error(err);

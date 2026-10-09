@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { User, Shield, Ban, CheckCircle, Trash2, ShieldAlert, Key, Activity } from 'lucide-react';
+import { useNotification } from '../ui/NotificationProvider';
 
 export default function UsersTable() {
+  const { notify } = useNotification();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,15 +49,15 @@ export default function UsersTable() {
         fetchUsers();
       } else {
         const err = await res.json();
-        alert(err.error || 'Failed to create user');
+        notify('Notification', err.error || 'Failed to create user', 'destructive');
       }
     } catch (e) {
-      alert('Failed to create user');
+      notify('Error', 'Failed to create user', 'destructive');
     }
   };
 
   const handleBanUser = async (userId: string) => {
-    if (!banReason) { alert('A reason is required'); return; }
+    if (!banReason) { notify('Notification', 'A reason is required', 'default'); return; }
     try {
       const res = await fetch(`/api/admin/users/${userId}/restrictions`, {
         method: 'POST',
@@ -67,7 +69,7 @@ export default function UsersTable() {
         fetchUsers();
       }
     } catch (e) {
-      alert('Failed to apply ban');
+      notify('Error', 'Failed to apply ban', 'destructive');
     }
   };
 
@@ -85,7 +87,7 @@ export default function UsersTable() {
       const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
       if (res.ok) setUsers(prev => prev.filter(u => u.id !== id));
     } catch (e) {
-      alert('Failed to delete user');
+      notify('Error', 'Failed to delete user', 'destructive');
     }
   };
 

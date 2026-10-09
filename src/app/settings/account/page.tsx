@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { Loader2, Check } from 'lucide-react';
+import { useNotification } from '../../../components/ui/NotificationProvider';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -16,12 +17,13 @@ const AVATAR_OPTIONS = [
 ];
 
 export default function AccountSettings() {
+  const { notify } = useNotification();
   const { data: profile, mutate } = useSWR('/api/me/profile', fetcher);
   
   const [displayName, setDisplayName] = useState('');
   const [avatar, setAvatar] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [toast, setToast] = useState('');
+  
 
   useEffect(() => {
     if (profile) {
@@ -42,8 +44,8 @@ export default function AccountSettings() {
         body: JSON.stringify({ displayName, avatar }),
       });
       await mutate();
-      setToast('Account settings saved');
-      setTimeout(() => setToast(''), 3000);
+      notify('Success', 'Account settings saved', 'success');
+      
     } catch (error) {
       console.error(error);
     } finally {
@@ -130,11 +132,7 @@ export default function AccountSettings() {
             Save Changes
           </button>
           
-          {toast && (
-            <div className="text-green-400 text-sm font-medium flex items-center gap-2 animate-fade-in">
-              <Check size={16} /> {toast}
-            </div>
-          )}
+
         </div>
       </form>
     </div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Shield, EyeOff, Eye, Trash2, Edit3, Pin, AlertCircle, MessageSquare, X, CheckCircle } from 'lucide-react';
+import { useNotification } from '../ui/NotificationProvider';
 
 function timeAgo(date: string | Date) {
   const diff = Date.now() - new Date(date).getTime();
@@ -28,6 +29,7 @@ interface Review {
 }
 
 export default function ReviewModerationTable({ mediaId }: { mediaId?: string }) {
+  const { notify } = useNotification();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
@@ -84,7 +86,7 @@ export default function ReviewModerationTable({ mediaId }: { mediaId?: string })
         setReviews(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
       }
     } catch (e) {
-      alert('Failed to update review');
+      notify('Error', 'Failed to update review', 'destructive');
     }
   };
 
@@ -95,10 +97,10 @@ export default function ReviewModerationTable({ mediaId }: { mediaId?: string })
       if (res.ok) {
         setReviews(prev => prev.filter(r => r.id !== id));
       } else {
-        alert('Failed to delete review');
+        notify('Error', 'Failed to delete review', 'destructive');
       }
     } catch (e) {
-      alert('Failed to delete review');
+      notify('Error', 'Failed to delete review', 'destructive');
     }
   };
 

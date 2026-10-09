@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import TorrentUploader, { TorrentMetadata } from '../TorrentUploader';
 import FileIndexSelector from '../FileIndexSelector';
 import { Save, AlertTriangle, PlayCircle, Loader2 } from 'lucide-react';
+import { useNotification } from '../../ui/NotificationProvider';
 
 export default function MediaTab({ data }: { data: any }) {
+  const { notify } = useNotification();
   const [parsedTorrent, setParsedTorrent] = useState<TorrentMetadata | null>(null);
   const [selectedFileIndex, setSelectedFileIndex] = useState<number | null>(null);
   const [isApplying, setIsApplying] = useState(false);
@@ -25,11 +27,11 @@ export default function MediaTab({ data }: { data: any }) {
         })
       });
       if (!res.ok) throw new Error('Failed to map media');
-      alert('Media source updated successfully!');
+      notify('Notification', 'Media source updated successfully!', 'default');
       setParsedTorrent(null);
       setSelectedFileIndex(null);
     } catch (e: any) {
-      alert(e.message);
+      notify('Notification', e.message, 'default');
     } finally {
       setIsApplying(false);
     }

@@ -6,10 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Save, AlertTriangle, Eye, Star, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useNotification } from '../../ui/NotificationProvider';
 
 const detailsSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  originalName: z.string().optional(),
+  originalTitle: z.string().optional(),
   slug: z.string().min(1, 'Slug is required'),
   tagline: z.string().optional(),
   hoverTagline: z.string().max(120, 'Max 120 characters').optional(),
@@ -26,14 +27,18 @@ const detailsSchema = z.object({
 type DetailsFormValues = z.infer<typeof detailsSchema>;
 
 export default function DetailsTab({ data }: { data: any }) {
+  const { notify } = useNotification();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [tmdbInput, setTmdbInput] = useState(data?.tmdbId?.toString() || '');
+  const [tmdbType, setTmdbType] = useState<'movie' | 'tv'>(data?.type === 'SERIES' ? 'tv' : 'movie');
+  const [isFetchingTmdb, setIsFetchingTmdb] = useState(false);
 
-  const { register, handleSubmit, formState: { errors, isDirty }, watch, reset } = useForm<DetailsFormValues>({
+  const { register, handleSubmit, formState: { errors, isDirty }, watch, reset, setValue } = useForm<DetailsFormValues>({
     resolver: zodResolver(detailsSchema),
     defaultValues: {
       title: data?.title || '',
-      originalName: data?.originalName || '',
+      originalTitle: data?.originalTitle || '',
       slug: data?.id || '', // Using id as slug for now if slug doesn't exist
       tagline: data?.tagline || '',
       hoverTagline: data?.hoverTagline || '',
@@ -50,11 +55,60 @@ export default function DetailsTab({ data }: { data: any }) {
 
   const hoverTaglineLength = watch('hoverTagline')?.length || 0;
 
+  const fetchTmdb = async () => {
+    const id = tmdbInput.trim();
+    if (!id) return notify('Notification', 'Enter a TMDB ID first.', 'default');
+    setIsFetchingTmdb(true);
+    try {
+      const res = await fetch(`/api/admin/tmdb?tmdbId=${id}&type=${tmdbType}`);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'TMDB fetch failed');
+      }
+      const tmdb = await res.json();
+
+      // Fill form fields
+      setValue('title', tmdb.title, { shouldDirty: true });
+      if (tmdb.originalTitle) setValue('originalTitle', tmdb.originalTitle, { shouldDirty: true });
+      if (tmdb.tagline) setValue('tagline', tmdb.tagline, { shouldDirty: true });
+      if (tmdb.overview) setValue('overview', tmdb.overview, { shouldDirty: true });
+      if (tmdb.type) setValue('type', tmdb.type as any, { shouldDirty: true });
+      if (tmdb.category) setValue('category', tmdb.category as any, { shouldDirty: true });
+      if (tmdb.releaseYear) setValue('releaseYear', tmdb.releaseYear, { shouldDirty: true });
+      if (tmdb.runtime) setValue('runtime', tmdb.runtime, { shouldDirty: true });
+
+      // Save non-form fields (poster, backdrop, logo, tmdbId, genres, rating, etc.) directly to DB
+      const patchData: any = {};
+      if (tmdb.tmdbId) patchData.tmdbId = tmdb.tmdbId;
+      if (tmdb.imdbId) patchData.imdbId = tmdb.imdbId;
+      if (tmdb.posterPath) patchData.posterPath = tmdb.posterPath;
+      if (tmdb.backdropPath) patchData.backdropPath = tmdb.backdropPath;
+      if (tmdb.logoPath) patchData.logoPath = tmdb.logoPath;
+      if (tmdb.genres) patchData.genres = tmdb.genres;
+      if (tmdb.rating != null) patchData.rating = tmdb.rating;
+      if (tmdb.voteCount != null) patchData.voteCount = tmdb.voteCount;
+
+      if (data?.id && Object.keys(patchData).length > 0) {
+        await fetch(`/api/admin/titles/${data.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patchData),
+        });
+      }
+
+      notify('Success', 'TMDB data loaded! Review the fields and click Save Changes.', 'success');
+    } catch (e: any) {
+      notify('Notification', '❌ ' + e.message, 'default');
+    } finally {
+      setIsFetchingTmdb(false);
+    }
+  };
+
   const onSave = async (formData: DetailsFormValues) => {
     setIsSaving(true);
     try {
       const res = await fetch(`/api/admin/titles/${data.id}`, {
-        method,
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
@@ -63,10 +117,10 @@ export default function DetailsTab({ data }: { data: any }) {
         throw new Error(err.error || 'Failed to save');
       }
       reset(formData); // clear dirty state
-      alert('Details saved successfully');
+      notify('Notification', 'Details saved successfully', 'default');
       if (!data?.id) { router.push(`/admin/media/${formData.slug}`); } else { router.refresh(); }
     } catch (e: any) {
-      alert(e.message);
+      notify('Notification', e.message, 'default');
     } finally {
       setIsSaving(false);
     }
@@ -86,6 +140,38 @@ export default function DetailsTab({ data }: { data: any }) {
           {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
           Save Changes
         </button>
+      </div>
+
+      {/* TMDB Auto-fill */}
+      <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-2">
+        <label className="text-sm font-medium text-white/70 mb-2 block">Auto-fill from TMDB</label>
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            value={tmdbInput}
+            onChange={(e) => setTmdbInput(e.target.value)}
+            placeholder="TMDB ID (e.g. 550)"
+            className="flex-1 bg-black/60 border border-white/20 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:border-primary transition-colors"
+          />
+          <select
+            value={tmdbType}
+            onChange={(e) => setTmdbType(e.target.value as 'movie' | 'tv')}
+            className="bg-black/60 border border-white/20 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:border-primary transition-colors appearance-none"
+          >
+            <option value="movie">Movie</option>
+            <option value="tv">TV Show</option>
+          </select>
+          <button
+            type="button"
+            onClick={fetchTmdb}
+            disabled={isFetchingTmdb}
+            className="bg-primary hover:bg-primary-hover text-white font-medium py-2.5 px-6 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap disabled:opacity-50"
+          >
+            {isFetchingTmdb ? <Loader2 size={16} className="animate-spin" /> : null}
+            Fetch TMDB
+          </button>
+        </div>
+        <p className="text-xs text-white/40 mt-2">Enter a TMDB ID to auto-fill title, overview, poster, backdrop, logo, genres, and more.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-6">

@@ -3,9 +3,11 @@
 import React, { useState, useRef } from 'react';
 import { Upload, X, Crop, Maximize, Palette, Wand2, Loader2 } from 'lucide-react';
 import { AmbientCanvas } from '../../../features/ambient/ui/AmbientCanvas';
-import HoverBanner from '../../browse/HoverBanner';
+import { HoverBanner } from '../../browse/HoverBanner';
+import { useNotification } from '../../ui/NotificationProvider';
 
 export default function ArtworkTab({ data }: { data: any }) {
+  const { notify } = useNotification();
   const [hoverBanner, setHoverBanner] = useState<string | null>(data?.hoverBannerUrl || null);
   const [focalPoint, setFocalPoint] = useState<{x: number, y: number}>(
     data?.hoverBannerFocal ? JSON.parse(data.hoverBannerFocal) : { x: 50, y: 50 }
@@ -18,7 +20,70 @@ export default function ArtworkTab({ data }: { data: any }) {
     data?.ambientPalette ? JSON.parse(data.ambientPalette) : null
   );
 
+  // Title Logo state
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(data?.logoPath || null);
+  const [isLogoSaving, setIsLogoSaving] = useState(false);
+
   const imageRef = useRef<HTMLImageElement>(null);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const saveLogo = async () => {
+    if (!logoFile && !logoPreview) return;
+    setIsLogoSaving(true);
+    try {
+      if (logoFile) {
+        // Upload the file first
+        const formData = new FormData();
+        formData.append('file', logoFile);
+        formData.append('type', 'logo');
+        formData.append('mediaId', data.id);
+        const uploadRes = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+        if (!uploadRes.ok) throw new Error('Upload failed');
+        const { url } = await uploadRes.json();
+        // Save the path to the media record
+        const res = await fetch(`/api/admin/titles/${data.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ logoPath: url })
+        });
+        if (!res.ok) throw new Error('Failed to save logo path');
+        setLogoPreview(url);
+        setLogoFile(null);
+      }
+      notify('Notification', 'Title logo saved successfully!', 'default');
+    } catch (e: any) {
+      notify('Notification', e.message, 'default');
+    } finally {
+      setIsLogoSaving(false);
+    }
+  };
+
+  const removeLogo = async () => {
+    setIsLogoSaving(true);
+    try {
+      const res = await fetch(`/api/admin/titles/${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ logoPath: null })
+      });
+      if (!res.ok) throw new Error('Failed to remove logo');
+      setLogoPreview(null);
+      setLogoFile(null);
+      notify('Notification', 'Title logo removed.', 'default');
+    } catch (e: any) {
+      notify('Notification', e.message, 'default');
+    } finally {
+      setIsLogoSaving(false);
+    }
+  };
 
   const handleHoverBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -55,6 +120,65 @@ export default function ArtworkTab({ data }: { data: any }) {
         <h2 className="text-2xl font-bold text-white font-heading mb-2">Artwork & Assets</h2>
         <p className="text-white/40 text-sm">Manage posters, backdrops, and interactive UI assets.</p>
       </div>
+
+      {/* Title Logo Section */}
+      <section className="space-y-4">
+        <h3 className="text-lg font-semibold text-white/90 border-b border-white/10 pb-2">Title Logo (PNG)</h3>
+        <p className="text-sm text-white/50">A transparent PNG of the movie/show title text, displayed over the hero banner instead of plain text.</p>
+        
+        <div className="bg-black/50 border border-white/10 rounded-xl p-4">
+          {!logoPreview ? (
+            <label className="flex flex-col items-center justify-center w-full h-40 max-w-2xl mx-auto border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all">
+              <Upload className="w-8 h-8 text-white/40 mb-3" />
+              <span className="text-sm font-medium text-white/70">Upload Title Logo</span>
+              <span className="text-xs text-white/40 mt-1">PNG with transparency recommended</span>
+              <input type="file" className="hidden" accept="image/png,image/webp,image/svg+xml" onChange={handleLogoUpload} />
+            </label>
+          ) : (
+            <div className="space-y-4">
+              {/* Preview on a dark/light checkered background to show transparency */}
+              <div className="relative max-w-2xl mx-auto rounded-lg overflow-hidden border border-white/10" style={{ background: 'repeating-conic-gradient(#222 0% 25%, #333 0% 50%) 0 0 / 20px 20px' }}>
+                <div className="flex items-center justify-center p-8 min-h-[160px]">
+                  <img 
+                    src={logoPreview} 
+                    alt="Title logo" 
+                    className="max-h-[140px] w-auto object-contain drop-shadow-lg"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between max-w-2xl mx-auto">
+                <div className="text-sm text-white/50">
+                  {logoFile ? <span className="text-yellow-400/80">Unsaved — click Save to apply</span> : <span className="text-green-400/80">✓ Saved</span>}
+                </div>
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors cursor-pointer">
+                    <Upload size={16} /> Replace
+                    <input type="file" className="hidden" accept="image/png,image/webp,image/svg+xml" onChange={handleLogoUpload} />
+                  </label>
+                  {logoFile && (
+                    <button 
+                      onClick={saveLogo} 
+                      disabled={isLogoSaving}
+                      className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-medium transition-colors"
+                    >
+                      {isLogoSaving ? <Loader2 size={16} className="animate-spin" /> : null}
+                      Save
+                    </button>
+                  )}
+                  <button 
+                    onClick={removeLogo} 
+                    disabled={isLogoSaving}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <X size={16} /> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Hover Banner Section */}
       <section className="space-y-4">

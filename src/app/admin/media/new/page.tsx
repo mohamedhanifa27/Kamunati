@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import { Loader2, Film, CheckCircle, Search, FileDown, ShieldCheck, ChevronRight, ChevronLeft } from 'lucide-react';
+import { useNotification } from '../../../../components/ui/NotificationProvider';
 
 export default function NewMediaWizard() {
   const router = useRouter();
+  const { notify } = useNotification();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,7 +28,7 @@ export default function NewMediaWizard() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!attestation) {
-      alert('You must check the attestation checkbox.');
+      notify('Action required', 'You must check the attestation checkbox.', 'destructive');
       return;
     }
     
@@ -45,10 +47,10 @@ export default function NewMediaWizard() {
         // For now, redirect to the media editor to attach the torrent
         router.push(`/admin/media/${data.id}?magnet=${encodeURIComponent(magnetUri)}`);
       } else {
-        alert(data.error || 'Failed to create media');
+        notify('Error', data.error || 'Failed to create media', 'destructive');
       }
     } catch (err) {
-      alert('Network error');
+      notify('Error', 'Network error', 'destructive');
     } finally {
       setIsSubmitting(false);
     }
