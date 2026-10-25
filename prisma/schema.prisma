@@ -60,6 +60,7 @@ model Media {
   backdropPath            String?
   releaseYear             Int?
   runtime                 Int?
+  maturityRating          String?
   rating                  Float?
   voteCount               Int?
   genres                  String        // JSON array
@@ -76,6 +77,10 @@ model Media {
   sourceRef               String?     // JSON
   removedAt               DateTime?
   removedById             String?
+  logoPath                String?
+  cast                    String?     // JSON array
+  directors               String?     // JSON array
+  tmdbReviews             String?     // JSON array
 
   // U2.1: Category, hover banner, ambient palette
   category                String?       // MOVIE | TV_SERIES | ANIME
@@ -507,4 +512,21 @@ model DashboardMetricSample {
   value     Int
 
   @@index([key, ts(sort: Desc)])
+}
+
+
+model LandingRow {
+  id              String   @id @default(uuid())
+  title           String
+  type            String   @default("RECENT") // RECENT, TRENDING, TOP_RATED, GENRE, CATEGORY, CUSTOM
+  genre           String?
+  category        String?  // ALL, MOVIE, TV_SERIES, ANIME
+  customMediaIds  String?  // JSON array of strings
+  limit           Int      @default(20)
+  sortOrder       Int      @default(0)
+  isEnabled       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([sortOrder])
 }

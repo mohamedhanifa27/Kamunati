@@ -13,5 +13,8 @@
     "src/services/**/*.ts",
     "src/utils/**/*.ts",
     "src/validators/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.test.ts"
   ]
 }

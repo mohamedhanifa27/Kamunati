@@ -1,5 +1,5 @@
 const TMDB_API_KEY = process.env.TMDB_API_KEY || 'dummy_key';
-const BASE_URL = 'https://api.themoviedb.org/3';
+const BASE_URL = 'https://api.tmdb.org/3';
 
 export const getImageUrl = (path: string | null, size: 'original' | 'w500' = 'original') => {
   if (!path) return null;
@@ -39,7 +39,7 @@ export async function search(query: string, type: 'MOVIE' | 'SERIES') {
 
 export async function fetchDetails(tmdbId: number, type: 'MOVIE' | 'SERIES') {
   const endpoint = type === 'MOVIE' ? `/movie/${tmdbId}` : `/tv/${tmdbId}`;
-  return await fetchTmdb<any>(endpoint, { append_to_response: 'credits,videos' });
+  return await fetchTmdb<any>(endpoint, { append_to_response: 'credits,videos,reviews,release_dates,content_ratings' });
 }
 
 export async function fetchSeriesStructure(tmdbId: number, seasonCount: number) {

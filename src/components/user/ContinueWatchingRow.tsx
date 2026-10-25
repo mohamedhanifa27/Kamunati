@@ -109,7 +109,7 @@ export default function ContinueWatchingRow({ items }: ContinueWatchingRowProps)
         
         <div 
           ref={rowRef}
-          onScroll={onScroll}
+          onScroll={onScroll} onWheel={(e) => { if (rowRef.current && e.deltaY !== 0 && Math.abs(e.deltaX) === 0) { e.preventDefault(); rowRef.current.scrollBy({ left: e.deltaY > 0 ? 300 : -300, behavior: "smooth" }); } }}
           className="flex space-x-4 overflow-x-auto hide-scrollbar px-8 md:px-16 scroll-smooth snap-x snap-mandatory pb-[24px] -mb-[24px]"
         >
           {items.map((item, index) => (

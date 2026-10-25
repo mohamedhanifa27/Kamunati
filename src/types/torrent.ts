@@ -44,8 +44,13 @@ export interface EngineInstance {
   infoHash: string;
   files: MediaFile[];
   stats: SwarmStats;
+  torrent?: any;
+  bitfield?: any;
   destroy(callback: () => void): void;
   setStreamPosition(byteOffset: number, file: MediaFile): void;
+  // [RECTIFICATION:MEDIA_PLAYBACK_TILL_END_AND_MULTI_FILE]
+  prioritizeFile?(file: MediaFile): void;
+  isFileComplete?(file: MediaFile): boolean;
   getPrimaryFile(): MediaFile | null;
   resetIdleTimer(): void;
 }

@@ -41,7 +41,7 @@ export default function WatchedListPage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {watched.map((item: any) => (
             <div key={item.id} className="relative group rounded-xl overflow-hidden bg-neutral-900 border border-white/10 aspect-[2/3]">
-              <img src={item.media?.posterPath || '/logo_vector.svg'} alt={item.media?.title} className="w-full h-full object-cover" />
+              <img src={item.media?.posterPath || '/logo.svg'} alt={item.media?.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
                   onClick={() => handleRemove(item.id)}

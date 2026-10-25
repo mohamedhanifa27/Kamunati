@@ -19,8 +19,27 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/my-list',
-        destination: '/list',
+        source: '/api/v1/stream/:path*',
+        destination: 'http://127.0.0.1:8080/api/v1/stream/:path*',
+      },
+      {
+        source: '/api/v1/torrent/:path*',
+        destination: 'http://127.0.0.1:8080/api/v1/torrent/:path*',
+      }
+    ];
+  },
+  // [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT]
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' }
+        ]
       }
     ];
   }

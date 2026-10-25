@@ -22,6 +22,9 @@ const detailsSchema = z.object({
   maturityRating: z.string().optional(),
   isPublished: z.boolean(),
   isFeatured: z.boolean(),
+  genres: z.string().optional(),
+  cast: z.string().optional(),
+  directors: z.string().optional(),
 });
 
 type DetailsFormValues = z.infer<typeof detailsSchema>;
@@ -50,6 +53,9 @@ export default function DetailsTab({ data }: { data: any }) {
       maturityRating: data?.maturityRating || '',
       isPublished: data?.isPublished ?? false,
       isFeatured: data?.isFeatured ?? false,
+      genres: data?.genres || '',
+      cast: data?.cast || '',
+      directors: data?.directors || '',
     }
   });
 
@@ -84,16 +90,41 @@ export default function DetailsTab({ data }: { data: any }) {
       if (tmdb.posterPath) patchData.posterPath = tmdb.posterPath;
       if (tmdb.backdropPath) patchData.backdropPath = tmdb.backdropPath;
       if (tmdb.logoPath) patchData.logoPath = tmdb.logoPath;
-      if (tmdb.genres) patchData.genres = tmdb.genres;
       if (tmdb.rating != null) patchData.rating = tmdb.rating;
       if (tmdb.voteCount != null) patchData.voteCount = tmdb.voteCount;
+      if (tmdb.maturityRating) {
+        patchData.maturityRating = tmdb.maturityRating;
+        setValue('maturityRating', tmdb.maturityRating, { shouldDirty: true });
+      }
+
+      if (tmdb.genres) {
+        patchData.genres = tmdb.genres;
+        setValue('genres', tmdb.genres, { shouldDirty: true });
+      }
+      if (tmdb.cast) {
+        patchData.cast = tmdb.cast;
+        setValue('cast', tmdb.cast, { shouldDirty: true });
+      }
+      if (tmdb.directors) {
+        patchData.directors = tmdb.directors;
+        setValue('directors', tmdb.directors, { shouldDirty: true });
+      }
+      if (tmdb.tmdbReviews) {
+        patchData.tmdbReviews = tmdb.tmdbReviews;
+      }
 
       if (data?.id && Object.keys(patchData).length > 0) {
-        await fetch(`/api/admin/titles/${data.id}`, {
+        const patchRes = await fetch(`/api/admin/titles/${data.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(patchData),
         });
+        const patchJson = await patchRes.json();
+        if (patchJson.merged && patchJson.targetId) {
+          notify('Success', `✨ Merged torrents into existing title "${patchJson.targetTitle || 'existing'}" (TMDB ID: ${patchData.tmdbId})!`, 'success');
+          router.push(`/admin/media/${patchJson.targetId}`);
+          return;
+        }
       }
 
       notify('Success', 'TMDB data loaded! Review the fields and click Save Changes.', 'success');
@@ -107,14 +138,24 @@ export default function DetailsTab({ data }: { data: any }) {
   const onSave = async (formData: DetailsFormValues) => {
     setIsSaving(true);
     try {
+      const payload: any = { ...formData };
+      if (tmdbInput.trim()) {
+        const parsed = parseInt(tmdbInput.trim());
+        if (!isNaN(parsed)) payload.tmdbId = parsed;
+      }
       const res = await fetch(`/api/admin/titles/${data.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
+      const resJson = await res.json();
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Failed to save');
+        throw new Error(resJson.error || 'Failed to save');
+      }
+      if (resJson.merged && resJson.targetId) {
+        notify('Success', `✨ Merged torrents into "${resJson.targetTitle || 'existing'}" (TMDB ID: ${payload.tmdbId})!`, 'success');
+        router.push(`/admin/media/${resJson.targetId}`);
+        return;
       }
       reset(formData); // clear dirty state
       notify('Notification', 'Details saved successfully', 'default');
@@ -171,7 +212,7 @@ export default function DetailsTab({ data }: { data: any }) {
             Fetch TMDB
           </button>
         </div>
-        <p className="text-xs text-white/40 mt-2">Enter a TMDB ID to auto-fill title, overview, poster, backdrop, logo, genres, and more.</p>
+        <p className="text-xs text-white/40 mt-2">Enter a TMDB ID to auto-fill title, overview, poster, backdrop, logo, genres, and more. If another title already has this TMDB ID, they will be automatically merged into one!</p>
       </div>
 
       <div className="grid grid-cols-2 gap-6">
@@ -255,7 +296,34 @@ export default function DetailsTab({ data }: { data: any }) {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2 md:col-span-1">
+          <label className="text-sm font-medium text-white/70">Genres (JSON array)</label>
+          <input 
+            {...register('genres')} 
+            placeholder='["Action", "Drama"]'
+            className="w-full bg-black/60 border border-white/20 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:border-primary transition-colors"
+          />
+        </div>
+
+        <div className="space-y-2 col-span-2 md:col-span-1">
+          <label className="text-sm font-medium text-white/70">Cast (JSON array)</label>
+          <input 
+            {...register('cast')} 
+            placeholder='["Actor 1", "Actor 2"]'
+            className="w-full bg-black/60 border border-white/20 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:border-primary transition-colors"
+          />
+        </div>
+
+        <div className="space-y-2 col-span-2 md:col-span-1">
+          <label className="text-sm font-medium text-white/70">Directors (JSON array)</label>
+          <input 
+            {...register('directors')} 
+            placeholder='["Director 1"]'
+            className="w-full bg-black/60 border border-white/20 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:border-primary transition-colors"
+          />
+        </div>
+
+        <div className="space-y-2 col-span-2 md:col-span-1">
           <label className="text-sm font-medium text-white/70">Release Year</label>
           <input 
             type="number"
@@ -264,7 +332,7 @@ export default function DetailsTab({ data }: { data: any }) {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2 md:col-span-1">
           <label className="text-sm font-medium text-white/70">Maturity Rating</label>
           <input 
             {...register('maturityRating')} 
@@ -307,6 +375,3 @@ export default function DetailsTab({ data }: { data: any }) {
     </form>
   );
 }
-
-
-

@@ -42,11 +42,8 @@ function IndeterminateBar({
               }
         }
         aria-hidden
-        className="absolute inset-y-0 left-0 h-full w-2/5 rounded-[inherit]"
-        style={{
-          willChange: reduceMotion ? undefined : "transform",
-          background: "linear-gradient(90deg, transparent, rgba(79,70,229,0.25) 25%, #818cf8 50%, rgba(79,70,229,0.25) 75%, transparent)"
-        }}
+        className="absolute inset-y-0 left-0 h-full w-2/5 rounded-[inherit] bg-gradient-to-r from-violet-500/25 via-violet-500 to-violet-500/25"
+        style={{ willChange: reduceMotion ? undefined : "transform" }}
         transition={{
           duration: reduceMotion ? 0.01 : 1.15,
           ease: "easeInOut",
@@ -137,7 +134,7 @@ export function HaloProgress({
               className="-bottom-3 absolute h-10 w-32 blur-xl"
               style={{
                 background:
-                  "linear-gradient(90deg, #4338ca, #4f46e5, #a5b4fc, #818cf8)",
+                  "linear-gradient(90deg, #501A96, #108AC2, #501A96)",
               }}
               transition={{
                 duration: reduceMotion ? 0.01 : 5.5,
@@ -170,12 +167,14 @@ export function HaloProgress({
               aria-hidden
               className={cn(
                 "absolute inset-y-0 left-0 h-full w-full origin-left rounded-[inherit]",
-                "halo-indigo-live",
                 "shadow-[0_1px_0_rgba(255,255,255,0.2)_inset]",
                 indicatorClassName
               )}
               initial={false}
-              style={{ willChange: reduceMotion ? undefined : "transform" }}
+              style={{ 
+                willChange: reduceMotion ? undefined : "transform",
+                background: "linear-gradient(to right, #501A96, #108AC2)"
+              }}
               transition={reduceMotion ? { duration: 0 } : { ...layoutSpring }}
             />
           )}

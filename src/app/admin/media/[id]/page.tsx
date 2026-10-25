@@ -17,7 +17,8 @@ export default async function EditMediaPage(props: { params: Promise<{ id: strin
 
   if (!isNew) {
     mediaData = await prisma.media.findUnique({
-      where: { id: params.id }
+      where: { id: params.id },
+      include: { torrents: true }
     });
 
     if (!mediaData) {

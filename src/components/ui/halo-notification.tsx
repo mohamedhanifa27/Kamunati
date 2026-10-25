@@ -1,18 +1,8 @@
 "use client"
 
-/**
- * Polished notification surface (`HaloPolishedToastSurface`) and
- * {@link HaloPolishedNotification} — slide + fade shell for local
- * `<AnimatePresence>` use. Self-contained {@link HaloCard}, rim variants, and
- * glyph stagger (no imports from `halo-card.tsx`). App-wide Sonner toasts:
- * `@/components/cult-pro/halo-toast`.
- */
 import {
   forwardRef,
   useEffect,
-  useMemo,
-  useState,
-  type ComponentProps,
   type ReactNode,
 } from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
@@ -26,8 +16,6 @@ import {
 
 import { cn } from "@/lib/utils"
 
-/* ─── Rim + card chrome (self-contained; no halo-card import) ─── */
-
 const paddingClass = {
   none: "",
   sm: "p-4",
@@ -37,7 +25,6 @@ const paddingClass = {
 
 const BORDER_TRAIL_LOOP_MS = 5250
 
-/** Inner corner radius for content inside `rounded-2xl` + `p-px` (concentric nested radii). */
 const CARD_INNER_RADIUS_CLASS = "rounded-[calc(1rem-1px)]"
 
 export type RimVariant = "default" | "success" | "destructive"
@@ -47,9 +34,9 @@ const RIM_BLOB_GRADIENTS: Record<
   { primaryBg: string; secondaryBg: string; tertiaryBg: string }
 > = {
   default: {
-    primaryBg: "linear-gradient(90deg, #818cf8, #4f46e5, #a5b4fc, #4338ca)",
-    secondaryBg: "linear-gradient(90deg, #6366f1, #a5b4fc, #818cf8)",
-    tertiaryBg: "linear-gradient(90deg, #4338ca, #a5b4fc, #4f46e5)",
+    primaryBg: "linear-gradient(90deg, #501A96, #108AC2, #501A96)",
+    secondaryBg: "linear-gradient(90deg, #108AC2, #501A96, #108AC2)",
+    tertiaryBg: "linear-gradient(90deg, #501A96, #108AC2, #501A96)",
   },
   success: {
     primaryBg:
@@ -75,13 +62,13 @@ interface BorderTrailChrome {
 const RIM_BORDER_TRAIL: Record<RimVariant, BorderTrailChrome> = {
   default: {
     ambientGradient:
-      "linear-gradient(90deg, transparent 0%, rgba(129,140,248,0) 6%, rgba(129,140,248,0.38) 24%, rgba(79,70,229,0.5) 50%, rgba(165,180,252,0.42) 76%, rgba(165,180,252,0) 94%, transparent 100%)",
+      "linear-gradient(90deg, transparent 0%, rgba(80,26,150,0) 6%, rgba(80,26,150,0.38) 24%, rgba(80,26,150,0.5) 50%, rgba(16,138,194,0.42) 76%, rgba(16,138,194,0) 94%, transparent 100%)",
     coreGradient:
-      "linear-gradient(90deg, transparent 0%, rgba(129,140,248,0.72) 20%, rgba(199,210,254,0.92) 50%, rgba(165,180,252,0.78) 80%, transparent 100%)",
+      "linear-gradient(90deg, transparent 0%, rgba(80,26,150,0.72) 20%, rgba(80,26,150,0.92) 50%, rgba(16,138,194,0.78) 80%, transparent 100%)",
     ambientGlow:
-      "0 0 22px rgba(79,70,229,0.28), 0 0 44px rgba(165,180,252,0.18), 0 0 2px rgba(255,255,255,0.12)",
+      "0 0 22px rgba(80,26,150,0.28), 0 0 44px rgba(16,138,194,0.18), 0 0 2px rgba(255,255,255,0.12)",
     coreGlow:
-      "0 0 14px rgba(129,140,248,0.35), 0 0 28px rgba(165,180,252,0.32), inset 0 0 1px rgba(255,255,255,0.22)",
+      "0 0 14px rgba(80,26,150,0.35), 0 0 28px rgba(16,138,194,0.32), inset 0 0 1px rgba(255,255,255,0.22)",
   },
   success: {
     ambientGradient:
@@ -290,289 +277,100 @@ function NotificationCardRimBlobs({
   )
 }
 
-interface HaloCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  translucent?: boolean
-  rim?: RimVariant
-  rimEmphasis?: boolean
-  trailActive?: boolean
-  padding?: keyof typeof paddingClass
-}
-
-/** Local fork of HaloCardPolished optimized for the notification surface. */
-const HaloCard = forwardRef<HTMLDivElement, HaloCardProps>(
-  (
-    {
-      className,
-      children,
-      translucent = false,
-      rim = "default",
-      rimEmphasis = false,
-      trailActive = false,
-      padding = "md",
-      ...props
-    },
-    ref
-  ) => {
-    const reduceMotion = useReducedMotion() ?? false
-    const borderGlow = useMemo(
-      () => notificationBorderGlowConfig(translucent, rimEmphasis, rim),
-      [translucent, rimEmphasis, rim]
-    )
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "group/halo-card relative w-full rounded-2xl p-px",
-          "shadow-[0_1px_2px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]",
-          "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_8px_32px_rgba(0,0,0,0.18)]",
-          className
-        )}
-        {...props}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 rounded-[inherit] border border-border/65 dark:border-border/85"
-          style={
-            translucent
-              ? {
-                  maskImage:
-                    "linear-gradient(to bottom, #000 65%, transparent 100%)",
-                }
-              : undefined
-          }
-        />
-        {translucent ? (
-          <NotificationCardRimBlobs
-            borderGlow={borderGlow}
-            reduceMotion={reduceMotion}
-          />
-        ) : null}
-        {!reduceMotion ? (
-          <NotificationCardBorderTrail active={trailActive} rimVariant={rim} />
-        ) : null}
-
-        <div
-          className={cn(
-            "relative z-10 size-full overflow-hidden",
-            CARD_INNER_RADIUS_CLASS,
-            paddingClass[padding]
-          )}
-        >
-          {translucent ? (
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-card/65 backdrop-blur-3xl backdrop-saturate-150" />
-          ) : (
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-card" />
-          )}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white/10 to-transparent opacity-0 mix-blend-overlay transition-opacity duration-500 group-hover/halo-card:opacity-100" />
-          <div className="pointer-events-none absolute inset-0 -z-10 shadow-[0_1px_0_rgba(255,255,255,0.12)_inset] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset]" />
-          {children}
-        </div>
-      </div>
-    )
-  }
-)
-HaloCard.displayName = "HaloCard"
-
-/* ─── Notification implementations ─── */
-
-export interface HaloPolishedToastSurfaceProps extends HaloCardProps {
-  onDismiss?: () => void
-}
-
-/**
- * The inner frosted surface containing the text and dismiss button.
- * Renders raw, without entrance animations. Use {@link HaloPolishedNotification}
- * when rendering in an `<AnimatePresence>`.
- */
-export const HaloPolishedToastSurface = forwardRef<
-  HTMLDivElement,
-  HaloPolishedToastSurfaceProps
->(
-  (
-    {
-      title,
-      children,
-      onDismiss,
-      className,
-      rim = "default",
-      rimEmphasis = true,
-      translucent = true,
-      trailActive = true,
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <HaloCard
-        className={cn(
-          "pointer-events-auto min-w-[280px] max-w-sm",
-          "shadow-[0_4px_24px_rgba(0,0,0,0.08),0_12px_48px_rgba(0,0,0,0.06)]",
-          "dark:shadow-[0_4px_24px_rgba(0,0,0,0.35),0_16px_64px_rgba(0,0,0,0.25)]",
-          className
-        )}
-        padding="none"
-        ref={ref}
-        rim={rim}
-        rimEmphasis={rimEmphasis}
-        trailActive={trailActive}
-        translucent={translucent}
-        {...props}
-      >
-        <div className="flex items-start gap-4 p-4 sm:p-5">
-          <div className="flex flex-1 flex-col gap-1.5 pt-0.5">
-            {title && (
-              <h3 className="font-medium text-foreground text-sm tracking-tight">
-                {title}
-              </h3>
-            )}
-            {children && (
-              <div className="text-muted-foreground text-sm/relaxed">
-                {children}
-              </div>
-            )}
-          </div>
-          {onDismiss && (
-            <ButtonPrimitive
-              className={cn(
-                "group -mt-1 -mr-2 relative flex shrink-0 cursor-pointer items-center justify-center rounded-full p-2 outline-none transition-colors fine-hover:hover:bg-muted/60",
-                "focus-visible:ring-2 focus-visible:ring-ring/40"
-              )}
-              onClick={onDismiss}
-            >
-              <XIcon
-                aria-hidden
-                className="size-4 text-muted-foreground/70 transition-colors group-hover:text-foreground"
-              />
-              <span className="sr-only">Dismiss</span>
-            </ButtonPrimitive>
-          )}
-        </div>
-      </HaloCard>
-    )
-  }
-)
-HaloPolishedToastSurface.displayName = "HaloPolishedToastSurface"
-
 export interface HaloPolishedNotificationProps
-  extends HaloPolishedToastSurfaceProps {
-  /** Unique key for the notification to drive stagger and presence. */
-  messageKey: string
-  /** Text shown below the title. Passed as children to the surface. */
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+  title: ReactNode
   description?: ReactNode
-  /** Direction the notification slides in from. */
-  slideFrom?: "bottom" | "top"
-  /**
-   * ARIA live region politeness. `assertive` generally causes immediate
-   * screen reader interruption. `polite` waits until the reader is idle.
-   */
   politeness?: "alert" | "status"
+  messageKey?: string
+  onDismiss?: () => void
+  slideFrom?: "top" | "bottom"
+  rimVariant?: RimVariant
+  translucent?: boolean
 }
 
-/**
- * A self-contained local notification ready to drop inside `<AnimatePresence>`.
- * Handles the slide, scale, fade, and text stagger automatically.
- */
 export const HaloPolishedNotification = forwardRef<
   HTMLDivElement,
   HaloPolishedNotificationProps
 >(
   (
     {
-      messageKey,
+      className,
       title,
       description,
-      onDismiss,
-      className,
-      slideFrom = "bottom",
       politeness = "status",
+      messageKey,
+      onDismiss,
+      slideFrom = "bottom",
+      rimVariant = "default",
+      translucent = true,
       ...props
     },
     ref
   ) => {
     const reduceMotion = useReducedMotion() ?? false
-    const yOffset = slideFrom === "bottom" ? 24 : -24
-    const isAlert = politeness === "alert" || props.rim === "destructive"
-
-    const [isMounted, setIsMounted] = useState(false)
-    useEffect(() => {
-      setIsMounted(true)
-    }, [])
+    const borderGlow = notificationBorderGlowConfig(
+      translucent,
+      true,
+      rimVariant
+    )
 
     return (
       <motion.div
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        aria-atomic="true"
-        aria-live={isAlert ? "assertive" : "polite"}
-        className="flex w-full justify-center"
-        exit={{
-          opacity: 0,
-          scale: 0.96,
-          y: yOffset * 0.5,
-          transition: { duration: 0.2 },
-        }}
-        initial={{ opacity: 0, y: yOffset, scale: 0.98 }}
         ref={ref}
-        role={isAlert ? "alert" : "status"}
-        transition={{
-          type: "spring",
-          bounce: 0,
-          duration: 0.45,
-        }}
+        layout
+        initial={{ opacity: 0, y: slideFrom === "top" ? -24 : 24, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className={cn(
+          "relative flex w-full max-w-sm flex-col overflow-hidden rounded-2xl p-px",
+          translucent
+            ? "bg-background/40 backdrop-blur-xl backdrop-saturate-150"
+            : "bg-background",
+          className
+        )}
+        role={politeness}
+        aria-live={politeness}
+        {...props}
       >
-        <HaloPolishedToastSurface
-          className={className}
-          onDismiss={onDismiss}
-          title={
-            !reduceMotion && isMounted ? (
-              <StaggeredText text={title || ""} />
-            ) : (
-              title
-            )
-          }
-          {...props}
-        >
-          {!reduceMotion && isMounted ? (
-            <motion.span
-              animate={{ opacity: 1 }}
-              initial={{ opacity: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              {description}
-            </motion.span>
-          ) : (
-            description
+        <NotificationCardBorderTrail active={true} rimVariant={rimVariant} />
+        <NotificationCardRimBlobs
+          borderGlow={borderGlow}
+          reduceMotion={reduceMotion}
+        />
+
+        <div
+          className={cn(
+            "relative z-10 flex w-full flex-col gap-2 bg-background/80 shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_2px_10px_rgba(0,0,0,0.35)]",
+            CARD_INNER_RADIUS_CLASS,
+            paddingClass.sm
           )}
-        </HaloPolishedToastSurface>
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <span className="text-sm font-semibold text-foreground">
+                {title}
+              </span>
+              {description && (
+                <span className="text-sm text-muted-foreground text-pretty">
+                  {description}
+                </span>
+              )}
+            </div>
+            {onDismiss && (
+              <ButtonPrimitive
+                className="shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                onClick={onDismiss}
+                aria-label="Dismiss notification"
+              >
+                <XIcon className="size-4" />
+              </ButtonPrimitive>
+            )}
+          </div>
+        </div>
       </motion.div>
     )
   }
 )
 HaloPolishedNotification.displayName = "HaloPolishedNotification"
-
-/* ─── Utils ─── */
-
-function StaggeredText({ text }: { text: ReactNode }) {
-  if (typeof text !== "string") return <>{text}</>
-
-  const chars = text.split("")
-  return (
-    <span className="inline-block">
-      {chars.map((char, i) => (
-        <motion.span
-          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-          className="inline-block"
-          // biome-ignore lint/suspicious/noArrayIndexKey: Character index is stable for this entrance animation
-          key={`${char}-${i}`}
-          initial={{ opacity: 0, filter: "blur(4px)", y: 2 }}
-          transition={{
-            duration: 0.25,
-            delay: i * 0.015,
-            ease: "easeOut",
-          }}
-        >
-          {char === " " ? "\u00A0" : char}
-        </motion.span>
-      ))}
-    </span>
-  )
-}

@@ -8,7 +8,7 @@ import { useNotification } from '../../../components/ui/NotificationProvider';
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 const AVATAR_OPTIONS = [
-  '/logo_vector.svg',
+  '/logo.svg',
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
   'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=150&q=80',
   'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80',

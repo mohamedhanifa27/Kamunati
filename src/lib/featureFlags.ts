@@ -17,7 +17,7 @@ export const featureFlags = {
   ambientBackground:  false, // Turned off per user request
   cardSounds:         flag('FLAG_CARD_SOUNDS'),
   hoverBanner:        flag('FLAG_HOVER_BANNER'),
-  categoryNav:        flag('FLAG_CATEGORY_NAV'),
+  categoryNav:        false,
   newBottomNav:       flag('FLAG_NEW_BOTTOM_NAV'),
   singleProfile:      flag('FLAG_SINGLE_PROFILE'),
   searchCard:         flag('FLAG_SEARCH_CARD'),

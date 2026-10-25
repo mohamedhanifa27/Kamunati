@@ -10,7 +10,7 @@ import { featureFlags } from '@/lib/featureFlags';
 const SECTIONS = [
   { id: 'account', title: 'Account', icon: User, path: '/settings/account' },
   { id: 'security', title: 'Security', icon: Shield, path: '/settings/security' },
-  { id: 'my-list', title: 'My List', icon: ListVideo, path: '/settings/my-list' },
+  
   { id: 'continue-watching', title: 'Continue Watching', icon: MonitorPlay, path: '/settings/continue-watching' },
   { id: 'appearance', title: 'Appearance', icon: Palette, path: '/settings/appearance' },
   { id: 'sound', title: 'Sound and haptics', icon: Volume2, path: '/settings/sound' },

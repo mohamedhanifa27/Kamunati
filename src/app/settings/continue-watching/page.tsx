@@ -73,7 +73,7 @@ export default function ManageContinueWatching() {
             return (
               <div key={item.id} className="flex gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
                 <div className="w-24 md:w-32 aspect-video shrink-0 bg-neutral-800 rounded-lg overflow-hidden relative border border-white/10">
-                  <img src={media?.posterPath || '/logo_vector.svg'} alt={media?.title} className="w-full h-full object-cover" />
+                  <img src={media?.posterPath || '/logo.svg'} alt={media?.title} className="w-full h-full object-cover" />
                   <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
                     <div className="h-full bg-primary" style={{ width: `${progressPct}%` }} />
                   </div>

@@ -4,6 +4,7 @@ import { Link } from 'next-view-transitions';
 import { Film, Edit3, Plus, Trash2 } from 'lucide-react';
 import { getDashboardMetrics } from '@/lib/admin/metrics';
 import LiveDashboardCards from '@/components/admin/LiveDashboardCards';
+import { AnalyticsChart } from '@/components/ui/analytics-chart';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,23 @@ export default async function AdminDashboardPage() {
       </div>
 
       <LiveDashboardCards initialData={snapshot} />
+
+      <div className="my-8 h-96">
+        <AnalyticsChart 
+          title="Total Views (Last 7 Days)" 
+          value="4,250" 
+          description="+12% from last week"
+          data={[
+            { name: 'Mon', value: 400 },
+            { name: 'Tue', value: 300 },
+            { name: 'Wed', value: 550 },
+            { name: 'Thu', value: 200 },
+            { name: 'Fri', value: 700 },
+            { name: 'Sat', value: 900 },
+            { name: 'Sun', value: 850 },
+          ]} 
+        />
+      </div>
 
       <div className="bg-black/40 border border-white/10 rounded-xl overflow-hidden shadow-lg">
         <table className="w-full text-left text-sm text-white/80">

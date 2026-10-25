@@ -1,7 +1,13 @@
+// [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT]
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
+import { requireAdminSession } from '@/lib/authGuard';
 
 export async function POST(req: Request) {
+  // [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT] Admin authorization guard
+  const { errorResponse } = await requireAdminSession();
+  if (errorResponse) return errorResponse;
+
   try {
     const body = await req.json();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -20,4 +26,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
-

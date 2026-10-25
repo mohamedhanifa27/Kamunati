@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+early_access: false
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "master"
+  tools:
+    shellcheck:
+      enabled: true
+    eslint:
+      enabled: true
+    biome:
+      enabled: false
+    markdownlint:
+      enabled: true
+    tsc:
+      enabled: true
+chat:
+  auto_reply: true
+instructions: |
+  This is Kamunati, a sequential BitTorrent streaming engine and Next.js cinema application.
+  - Streaming Engine (Fastify / torrent-stream):
+    - Must always include 'pipe:1' in FFmpeg CLI arguments.
+    - Fastify routes returning streams must use 'return reply.send(ffmpeg.stdout)'.
+    - torrent-stream must use verify: false to avoid multi-gigabyte disk verification pauses.
+    - Codec strategy: HEVC streams should be transcoded to H.264 ultrafast on the fly for web compatibility. Native H.264 should use -c:v copy.
+  - Next.js:
+    - BigInt columns in Prisma (like sizeInBytes) must be serialized to Number before crossing Server-to-Client component boundaries.
+    - Avoid unhandled video.play() rejections in client components.

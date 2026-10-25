@@ -1,12 +1,18 @@
+// [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT]
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { featureFlags } from '@/lib/featureFlags';
+import { requireAdminSession } from '@/lib/authGuard';
 // using bcrypt for password hashing
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
+  // [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT] Admin authorization guard
+  const { errorResponse } = await requireAdminSession();
+  if (errorResponse) return errorResponse;
+
   if (!featureFlags.adminUserAccess) return NextResponse.json({ error: 'NOT_IMPLEMENTED' }, { status: 501 });
   
   try {
@@ -51,6 +57,10 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  // [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT] Admin authorization guard
+  const { errorResponse } = await requireAdminSession();
+  if (errorResponse) return errorResponse;
+
   if (!featureFlags.adminUserAccess) return NextResponse.json({ error: 'NOT_IMPLEMENTED' }, { status: 501 });
 
   try {
@@ -75,4 +85,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
   }
 }
-

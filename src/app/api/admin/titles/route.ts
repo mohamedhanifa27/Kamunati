@@ -1,10 +1,16 @@
+// [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT]
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { requireAdminSession } from '@/lib/authGuard';
 import { z } from 'zod';
 
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
+  // [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT] Admin authorization guard
+  const { errorResponse } = await requireAdminSession();
+  if (errorResponse) return errorResponse;
+
   try {
     const body = await req.json();
     

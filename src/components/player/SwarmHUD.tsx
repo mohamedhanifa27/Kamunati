@@ -11,7 +11,7 @@ export default function SwarmHUD({ stats, visible }: SwarmHUDProps) {
   if (!visible) return null;
 
   return (
-    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-4 w-72 text-white font-mono text-xs shadow-2xl z-50 pointer-events-none">
+    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-4 w-72 text-white font-pixelcode text-xs shadow-2xl z-50 pointer-events-none">
       <div className="flex items-center justify-between mb-3 border-b border-white/20 pb-2">
         <h3 className="font-bold text-sm tracking-wide flex items-center gap-2">
           <Activity size={16} className="text-primary" />

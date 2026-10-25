@@ -20,6 +20,15 @@ export default async function adminMediaRoutes(fastify: FastifyInstance) {
     try {
       const tmdbData = await fetchDetails(tmdbId, type);
       
+      // Check if media with this tmdbId already exists
+      const existingMedia = await prisma.media.findUnique({
+        where: { tmdbId }
+      });
+
+      if (existingMedia) {
+        return reply.status(200).send(existingMedia);
+      }
+
       const media = await prisma.$transaction(async (tx: any) => {
         let releaseYear = null;
         const dateStr = tmdbData.release_date || tmdbData.first_air_date;
@@ -27,8 +36,26 @@ export default async function adminMediaRoutes(fastify: FastifyInstance) {
           releaseYear = new Date(dateStr).getFullYear();
         }
 
+
+        let maturityRating = null;
+        if (type === 'MOVIE' && tmdbData.release_dates?.results) {
+          const usRelease = tmdbData.release_dates.results.find((r: any) => r.iso_3166_1 === 'US');
+          if (usRelease && usRelease.release_dates.length > 0) {
+            maturityRating = usRelease.release_dates[0].certification || null;
+          }
+        } else if (type === 'SERIES' && tmdbData.content_ratings?.results) {
+          const usRating = tmdbData.content_ratings.results.find((r: any) => r.iso_3166_1 === 'US');
+          if (usRating) {
+            maturityRating = usRating.rating || null;
+          }
+        }
+
         const genres = tmdbData.genres ? tmdbData.genres.map((g: any) => g.name) : [];
         const slug = (tmdbData.title || tmdbData.name).toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + tmdbId;
+        
+        const cast = tmdbData.credits?.cast ? tmdbData.credits.cast.slice(0, 10).map((c: any) => c.name) : [];
+        const directors = tmdbData.credits?.crew ? tmdbData.credits.crew.filter((c: any) => c.job === 'Director').map((c: any) => c.name) : [];
+        const reviews = tmdbData.reviews?.results ? tmdbData.reviews.results.slice(0, 5).map((r: any) => ({ author: r.author, content: r.content, rating: r.author_details?.rating })) : [];
 
         const newMedia = await tx.media.create({
           data: {
@@ -43,10 +70,14 @@ export default async function adminMediaRoutes(fastify: FastifyInstance) {
             posterPath: getImageUrl(tmdbData.poster_path),
             backdropPath: getImageUrl(tmdbData.backdrop_path),
             releaseYear,
+            maturityRating,
             runtime: tmdbData.runtime || (tmdbData.episode_run_time ? tmdbData.episode_run_time[0] : null),
             rating: tmdbData.vote_average,
             voteCount: tmdbData.vote_count,
             genres: JSON.stringify(genres),
+            cast: JSON.stringify(cast),
+            directors: JSON.stringify(directors),
+            tmdbReviews: JSON.stringify(reviews),
             isPublished,
           }
         });
@@ -137,3 +168,4 @@ export default async function adminMediaRoutes(fastify: FastifyInstance) {
     return reply.status(204).send();
   });
 }
+

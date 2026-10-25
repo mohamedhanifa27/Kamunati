@@ -20,8 +20,8 @@ export function FloatingNavDock() {
   const { openSearch } = useSearchStore();
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
   
-  // Don't show dock on login page or admin pages
-  if (pathname === '/login' || pathname.startsWith('/admin')) {
+  // Don't show dock on login page, admin pages, or watch pages
+  if (pathname === '/login' || pathname.startsWith('/admin') || pathname?.startsWith('/watch')) {
     return null;
   }
 
@@ -48,13 +48,7 @@ export function FloatingNavDock() {
       href: "/search",
       onClick: handleSearchClick,
     },
-    {
-      title: "My List",
-      icon: (
-        <IconListDetails className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "/list",
-    },
+    
     {
       title: "Profile",
       icon: (

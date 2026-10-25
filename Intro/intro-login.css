@@ -1,0 +1,42 @@
+.il{--il-bg:#000;--il-ink:#fff;--il-mute:#9b9b9b;--il-line:#2d2d2d;--il-accent:#fff;--il-on-accent:#000;--il-err:#ff9b9b;
+min-height:100dvh;display:grid;place-items:center;background:var(--il-bg);color:var(--il-ink);
+padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);color-scheme:dark}
+.il *,.il *::before,.il *::after{box-sizing:border-box}
+.il-main{width:min(360px,calc(100% - 48px));padding:40px 0;display:flex;flex-direction:column;align-items:center;gap:28px}
+.il-slot{width:120px;aspect-ratio:1301/1076}
+.il-logo{display:block;width:100%;height:100%;fill:var(--il-ink);transform-origin:center;will-change:transform;overflow:visible}
+
+.il-panel{width:100%;opacity:0;visibility:hidden;transition:opacity .6s ease-out .45s,visibility 0s linear .45s}
+.il[data-revealed] .il-panel{opacity:1;visibility:visible}
+.il[data-still] .il-panel{transition-delay:0s}
+
+.il-title{margin:0 0 24px;font-size:30px;line-height:1.1;font-weight:600;letter-spacing:-.02em;text-align:center}
+.il-field{display:block;margin-bottom:16px}
+.il-field span{display:block;margin-bottom:6px;font-size:14px;color:var(--il-mute)}
+.il input{width:100%;height:48px;padding:0 14px;border:1px solid var(--il-line);border-radius:10px;background:transparent;color:var(--il-ink);font:inherit;transition:border-color .15s}
+.il input:hover{border-color:#4a4a4a}
+.il input:focus{border-color:var(--il-ink);outline:2px solid var(--il-ink);outline-offset:2px}
+.il-btn{width:100%;height:48px;margin-top:8px;border:0;border-radius:10px;background:var(--il-accent);color:var(--il-on-accent);font:inherit;font-weight:600;cursor:pointer;transition:background .15s,transform .1s}
+.il-btn:hover{background:#dcdcdc}
+.il-btn:active{transform:scale(.98)}
+.il-btn:disabled{opacity:.6;cursor:default}
+.il-btn:focus-visible,.il a:focus-visible{outline:2px solid var(--il-ink);outline-offset:3px}
+.il-msg{min-height:1.5em;margin:14px 0 0;font-size:14px;color:var(--il-mute);text-align:center}
+.il-err{color:var(--il-err)}
+.il-links{margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;color:var(--il-mute)}
+.il a{color:var(--il-ink);text-underline-offset:3px}
+
+/* intro: parts start hidden, then play once data-play is set */
+.il-body,.il-ray,.il-spark{opacity:0;transform-box:fill-box;transform-origin:center}
+.il-steam path{clip-path:inset(100% 0 0 0)}
+.il[data-play] .il-body{animation:il-puff .8s cubic-bezier(.2,1.25,.4,1) .15s both}
+.il[data-play] .il-steam path{animation:il-rise .75s cubic-bezier(.3,.7,.2,1) calc(.8s + var(--i)*.12s) forwards}
+.il[data-play] .il-ray{animation:il-shoot .55s cubic-bezier(.2,.8,.2,1) calc(1.05s + var(--i)*.05s) forwards}
+.il[data-play] .il-spark{animation:il-pop .6s cubic-bezier(.2,.9,.3,1.2) calc(1.6s + var(--i)*.18s) forwards}
+@keyframes il-puff{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+@keyframes il-rise{to{clip-path:inset(0)}}
+@keyframes il-shoot{from{opacity:0;transform:translate(var(--tx),var(--ty)) scale(.35)}to{opacity:1;transform:none}}
+@keyframes il-pop{from{opacity:0;transform:scale(0) rotate(-90deg)}to{opacity:1;transform:none}}
+/* reduced motion, or skipped: show the finished logo */
+.il[data-still] .il-body,.il[data-still] .il-ray,.il[data-still] .il-spark{opacity:1;animation:none}
+.il[data-still] .il-steam path{clip-path:none;animation:none}

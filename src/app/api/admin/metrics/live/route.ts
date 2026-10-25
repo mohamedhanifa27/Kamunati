@@ -1,9 +1,15 @@
+// [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT]
 import { NextResponse } from 'next/server';
 import { featureFlags } from '@/lib/featureFlags';
 import { getDashboardMetrics } from '@/lib/admin/metrics';
+import { requireAdminSession } from '@/lib/authGuard';
 
 // Keep connection open and send SSE updates
 export async function GET(req: Request) {
+  // [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT] Admin authorization guard
+  const { errorResponse } = await requireAdminSession();
+  if (errorResponse) return errorResponse;
+
   if (!featureFlags.adminRealtime || !featureFlags.adminLiveCards) {
     return NextResponse.json({ error: 'NOT_IMPLEMENTED' }, { status: 501 });
   }

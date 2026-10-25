@@ -68,7 +68,7 @@ export function HaloTabsTrigger({
       className={cn(
         "relative z-1 inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-md px-3 py-2",
         "font-medium text-muted-foreground text-sm tracking-tight antialiased",
-        "outline-none transition-colors duration-200 ease-out",
+        "outline-none transition-colors duration-200 ease-out active:scale-[0.96]",
         "focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:pointer-events-none disabled:opacity-50",
         "data-active:text-foreground",
@@ -94,9 +94,9 @@ export function HaloTabsIndicator({
       className={cn(
         "pointer-events-none absolute z-0",
         variant === "underline" &&
-          "-bottom-px left-[var(--active-tab-left)] h-0.5 w-[var(--active-tab-width)] rounded-none shadow-[0_0_12px_rgba(80,26,150,0.6),0_0_24px_rgba(16,138,194,0.4)] transition-[left,width] duration-300 ease-out halo-violet-live [mask-image:linear-gradient(90deg,transparent_0%,#000_18%,#000_82%,transparent_100%)] motion-reduce:transition-none",
+          "-bottom-px left-[var(--active-tab-left)] h-0.5 w-[var(--active-tab-width)] rounded-none shadow-[0_0_12px_rgba(80,26,150,0.6),0_0_24px_rgba(16,138,194,0.4)] transition-[left,width] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] halo-violet-live [mask-image:linear-gradient(90deg,transparent_0%,#000_18%,#000_82%,transparent_100%)] motion-reduce:transition-none",
         variant === "pill" &&
-          "top-[var(--active-tab-top)] left-[var(--active-tab-left)] h-[var(--active-tab-height)] w-[var(--active-tab-width)] rounded-full transition-[left,width,top,height] duration-300 ease-out motion-reduce:transition-none",
+          "top-[var(--active-tab-top)] left-[var(--active-tab-left)] h-[var(--active-tab-height)] w-[var(--active-tab-width)] rounded-full transition-[left,width,top,height] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
         className
       )}
       data-slot="halo-tabs-indicator"

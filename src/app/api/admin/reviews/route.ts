@@ -1,9 +1,15 @@
+// [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT]
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { requireAdminSession } from '@/lib/authGuard';
 
 const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
+  // [RECTIFICATION:SECURITY_CHECKS_ENHANCEMENT] Admin authorization guard
+  const { errorResponse } = await requireAdminSession();
+  if (errorResponse) return errorResponse;
+
   try {
     const { searchParams } = new URL(req.url);
     const mediaId = searchParams.get('mediaId');

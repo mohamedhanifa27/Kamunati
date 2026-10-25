@@ -13,6 +13,8 @@ interface HoverBannerProps {
   media: {
     id: string;
     title: string;
+    overview?: string;
+    logoUrl?: string | null;
     hoverBannerUrl?: string;
     hoverClipUrl?: string;
     backdropUrl?: string;
@@ -104,17 +106,19 @@ export function HoverBanner({ anchorElement, media, onPointerEnter, onPointerLea
         exit: { opacity: 0, transition: { duration: 0.15 } }
       };
     } else if (motionLevel === 'standard') {
+      // [RECTIFICATION:IMPROVE_ANIMATIONS] Apple ease-out glide
       return {
         hidden: { opacity: 0, scale: 0.96, transformOrigin: `${originX}px ${originY}px` },
-        visible: { opacity: 1, scale: 1, transition: { duration: 0.2, ease: 'easeOut' as any } },
-        exit: { opacity: 0, scale: 0.96, transition: { duration: 0.15 } }
+        visible: { opacity: 1, scale: 1, transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] } },
+        exit: { opacity: 0, scale: 0.96, transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] } }
       };
     } else {
       // expressive
+      // [RECTIFICATION:IMPROVE_ANIMATIONS] Apple physics spring curve with subtle bounce
       return {
-        hidden: { opacity: 0, scale: 0.9, transformOrigin: `${originX}px ${originY}px` },
-        visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 25 } as any },
-        exit: { opacity: 0, scale: 0.96, transition: { duration: 0.15 } }
+        hidden: { opacity: 0, scale: 0.93, transformOrigin: `${originX}px ${originY}px` },
+        visible: { opacity: 1, scale: 1, transition: { type: 'spring', duration: 0.38, bounce: 0.16 } as any },
+        exit: { opacity: 0, scale: 0.96, transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] } }
       };
     }
   }, [motionLevel, position, anchorElement]);
@@ -164,9 +168,18 @@ export function HoverBanner({ anchorElement, media, onPointerEnter, onPointerLea
         {/* Scrim for text */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-neutral-900 to-transparent pointer-events-none" />
         
-        {/* Title overlay on media */}
+        {/* [RECTIFICATION:PIXEL_FONT_DESCRIPTION_AND_TITLE_LOGO] */}
+        {/* Title overlay on media: render media title logo if available, fallback to title text */}
         <div className="absolute bottom-3 left-4 right-4 z-10 pointer-events-none">
-          <h3 className="text-xl font-bold text-white drop-shadow-md truncate">{media.title}</h3>
+          {media.logoUrl ? (
+            <img 
+              src={media.logoUrl} 
+              alt={media.title} 
+              className="max-h-10 max-w-[75%] object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" 
+            />
+          ) : (
+            <h3 className="text-xl font-bold text-white drop-shadow-md truncate">{media.title}</h3>
+          )}
         </div>
       </div>
 
@@ -190,8 +203,12 @@ export function HoverBanner({ anchorElement, media, onPointerEnter, onPointerLea
           </div>
         )}
 
-        {media.hoverTagline && (
-          <p className="text-sm text-neutral-300 line-clamp-1">{media.hoverTagline}</p>
+        {/* [RECTIFICATION:PIXEL_FONT_DESCRIPTION_AND_TITLE_LOGO] */}
+        {/* Description: render hoverTagline or overview with pixel font */}
+        {(media.hoverTagline || media.overview) && (
+          <p className="text-xs sm:text-sm text-neutral-300 line-clamp-2 font-pixelcode tracking-wide leading-relaxed">
+            {media.hoverTagline || media.overview}
+          </p>
         )}
 
         {/* Actions */}
@@ -202,12 +219,7 @@ export function HoverBanner({ anchorElement, media, onPointerEnter, onPointerLea
           >
             <PlayIcon size={16} className="mr-1" fill="currentColor" /> Play
           </Link>
-          <button 
-            title="Add to My List"
-            className="w-8 h-8 flex items-center justify-center rounded-full border-2 border-neutral-500 text-white hover:border-white transition-colors"
-          >
-            <PlusIcon size={16} />
-          </button>
+          
             <Link href={'/title/' + media.id}
             title="More Info"
             className="w-8 h-8 flex items-center justify-center rounded-full border-2 border-neutral-500 text-white hover:border-white transition-colors"

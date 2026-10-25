@@ -8,6 +8,7 @@ import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAmbientFocus } from '../../features/ambient';
+import { HaloSearch } from '../ui/halo-search';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -140,33 +141,25 @@ export function SearchCard() {
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]" 
             onClick={closeSearch} 
           />
+          // [RECTIFICATION:IMPROVE_ANIMATIONS] Responsive origin and fluid motion
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            exit={{ opacity: 0, scale: 0.96, y: 8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-x-0 bottom-0 md:bottom-auto md:top-24 md:left-1/2 md:-translate-x-1/2 w-full md:max-w-2xl bg-surface/90 backdrop-blur-xl border border-white/10 shadow-2xl z-[101] md:rounded-2xl rounded-t-2xl overflow-hidden flex flex-col max-h-[80vh]"
           >
             {/* Input Header */}
-            <div className="flex items-center p-4 border-b border-white/10 shrink-0">
-              <SearchIcon className="w-5 h-5 text-neutral-400 ml-2" />
-              <input 
-                ref={inputRef}
-                type="text" 
+            <div className="flex items-center p-4 border-b border-white/10 shrink-0 justify-center">
+              <HaloSearch
                 value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') handleSubmit(query);
-                }}
+                onChange={setQuery}
+                onSearch={handleSubmit}
                 placeholder="Search movies, series..."
-                className="flex-1 bg-transparent border-none text-xl font-heading px-4 py-2 focus:outline-none text-white placeholder-neutral-500"
-                role="combobox"
-                aria-expanded="true"
+                className="w-full max-w-full"
+                gradientVariant="violet"
+                autoFocus
               />
-              {query && (
-                <button onClick={() => setQuery('')} className="p-2 text-neutral-400 hover:text-white rounded-full">
-                  <X className="w-5 h-5" />
-                </button>
-              )}
             </div>
 
             {/* Scrollable Content */}

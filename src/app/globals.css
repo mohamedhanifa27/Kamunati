@@ -1,4 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 @import '../styles/tokens.css';
+
+@font-face {
+  font-family: 'PixelCode';
+  src: url('/fonts/PixelCode.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
 
 @font-face {
   font-family: 'Montserrat Alternates';
@@ -59,6 +67,10 @@ body {
   --halo-indigo-live-v: linear-gradient(180deg, #501A96, #108AC2, #501A96, #108AC2, #501A96);
   --halo-violet-live: linear-gradient(90deg, #501A96, #108AC2, #501A96, #108AC2, #501A96);
   --halo-violet-live-v: linear-gradient(180deg, #501A96, #108AC2, #501A96, #108AC2, #501A96);
+  /* [RECTIFICATION:IMPROVE_ANIMATIONS] Fluid custom timing curves */
+  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @keyframes halo-indigo-flow {
@@ -105,3 +117,139 @@ body {
     background-position: 50% 50%;
   }
 }
+
+@layer utilities {
+  /* [RECTIFICATION:REMOVE_LIVE_GRADIENT_FILL_IN_BUTTONS] */
+  /* Live colour gradient filled directly into buttons */
+  /* [RECTIFICATION:IMPROVE_ANIMATIONS] Global tactile press feedback */
+  button:not(:disabled):active,
+  a[role="button"]:not(:disabled):active,
+  .btn:not(:disabled):active,
+  .btn-live-gradient:not(:disabled):active {
+    transform: scale(0.97) !important;
+  }
+  .bg-primary,
+  button.bg-primary,
+  a.bg-primary,
+  .btn-live-gradient,
+  .btn-primary {
+    background-image: var(--halo-indigo-live) !important;
+    background-size: 200% 100% !important;
+    animation: halo-indigo-flow 4s linear infinite !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 4px 16px rgba(80, 26, 150, 0.4) !important;
+    transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.16s ease !important;
+  }
+  .hover\:bg-primary-hover:hover,
+  .bg-primary:hover,
+  button.bg-primary:hover,
+  a.bg-primary:hover,
+  .btn-live-gradient:hover,
+  .btn-primary:hover {
+    background-image: var(--halo-indigo-live) !important;
+    background-size: 200% 100% !important;
+    animation: halo-indigo-flow 2s linear infinite !important;
+    filter: brightness(1.15) !important;
+    box-shadow: 0 6px 24px rgba(80, 26, 150, 0.6) !important;
+    color: white !important;
+  }
+  .bg-danger, .bg-error {
+    background-color: #ef4444 !important;
+    background-image: none !important;
+    animation: none !important;
+    color: white !important;
+  }
+  .hover\:bg-danger-hover:hover,
+  .bg-danger:hover {
+    background-color: #dc2626 !important;
+    background-image: none !important;
+    animation: none !important;
+    color: white !important;
+  }
+  /* [RECTIFICATION:REMOVE_TEXT_LIVE_GRADIENT_AND_ADD_SEARCH_BAR_GLOW] */
+  /* Live gradient removed from text - text now renders crisp and solid with high contrast */
+  .text-primary {
+    color: var(--halo-indigo-400, #818cf8) !important;
+    background-image: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    animation: none !important;
+  }
+  .text-danger, .text-error {
+    color: #ef4444 !important;
+    background-image: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    animation: none !important;
+  }
+
+  /* [RECTIFICATION:PIXEL_FONT_DESCRIPTION_AND_TITLE_LOGO] */
+  /* Pixel font styling for media descriptions/synopses */
+  .font-pixelcode {
+    font-family: 'PixelCode', monospace !important;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* Cloud Projector Logo Animation */
+.il-slot {
+  width: 140px;
+  max-width: 80vw;
+  aspect-ratio: 1301 / 1076;
+}
+.il-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: #ffffff;
+  transform-origin: center;
+  will-change: transform;
+  overflow: visible;
+  filter: drop-shadow(0 0 25px rgba(120, 50, 220, 0.45));
+}
+.il-body, .il-ray, .il-spark {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.il-steam path {
+  clip-path: inset(100% 0 0 0);
+}
+.il[data-play] .il-body, .il.play .il-body {
+  animation: il-puff .8s cubic-bezier(.2,1.25,.4,1) .15s both;
+}
+.il[data-play] .il-steam path, .il.play .il-steam path {
+  animation: il-rise .75s cubic-bezier(.3,.7,.2,1) calc(.8s + var(--i)*.12s) forwards;
+}
+.il[data-play] .il-ray, .il.play .il-ray {
+  animation: il-shoot .55s cubic-bezier(.2,.8,.2,1) calc(1.05s + var(--i)*.05s) forwards;
+}
+.il[data-play] .il-spark, .il.play .il-spark {
+  animation: il-pop .6s cubic-bezier(.2,.9,.3,1.2) calc(1.6s + var(--i)*.18s) forwards;
+}
+@keyframes il-puff {
+  from { opacity: 0; transform: scale(.7); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes il-rise {
+  to { clip-path: inset(0); }
+}
+@keyframes il-shoot {
+  from { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.35); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes il-pop {
+  from { opacity: 0; transform: scale(0) rotate(-90deg); }
+  to { opacity: 1; transform: none; }
+}
+.il[data-still] .il-body, .il[data-still] .il-ray, .il[data-still] .il-spark,
+.il.still .il-body, .il.still .il-ray, .il.still .il-spark {
+  opacity: 1;
+  animation: none;
+}
+.il[data-still] .il-steam path, .il.still .il-steam path {
+  clip-path: none;
+  animation: none;
+}
+

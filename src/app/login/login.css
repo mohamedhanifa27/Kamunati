@@ -1,0 +1,285 @@
+:root {
+  --bg: #000;
+  --ink: #fff;
+  --mute: #9b9b9b;
+  --line: #2d2d2d;
+  --accent: #fff;
+  --on-accent: #000;
+  --err: #ff9b9b;
+  color-scheme: dark;
+}
+
+html.intro {
+  overflow: hidden;
+}
+
+.login-page-wrap {
+  min-height: 100dvh;
+  width: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-bricolage), "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: grid;
+  place-items: center;
+  position: relative;
+  z-index: 50;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.login-page-wrap *,
+.login-page-wrap *::before,
+.login-page-wrap *::after {
+  box-sizing: border-box;
+}
+
+.login-box {
+  width: min(360px, calc(100% - 48px));
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.slot {
+  width: 120px;
+  aspect-ratio: 1301 / 1076;
+}
+
+.logo-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: var(--ink);
+  transform-origin: center;
+  will-change: transform;
+  overflow: visible;
+}
+
+.panel {
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+
+.panel.revealed {
+  opacity: 1;
+  visibility: visible;
+}
+
+.login-title {
+  margin: 0 0 24px;
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--mute);
+}
+
+.login-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  transition: border-color 0.15s;
+}
+
+.login-input:hover {
+  border-color: #4a4a4a;
+}
+
+.login-input:focus {
+  border-color: var(--ink);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-btn:hover {
+  background: #dcdcdc;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+.submit-btn:focus-visible,
+.oauth-btn:focus-visible,
+.links a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-msg {
+  min-height: 1.5em;
+  margin: 14px 0 0;
+  font-size: 14px;
+  color: var(--mute);
+  text-align: center;
+}
+
+.login-msg.err {
+  color: var(--err);
+}
+
+.oauth-divider {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--mute);
+  font-size: 13px;
+}
+
+.oauth-line {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.oauth-buttons {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.oauth-btn {
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #111;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.oauth-btn:hover {
+  background: #1c1c1c;
+  border-color: #4a4a4a;
+}
+
+.links {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--mute);
+}
+
+.links a {
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+
+/* Intro: hidden start states */
+.login-page-wrap .body-part,
+.login-page-wrap .ray-part,
+.login-page-wrap .spark-part {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.login-page-wrap .steam-group path {
+  clip-path: inset(100% 0 0 0);
+}
+
+/* Playing animations */
+.login-page-wrap.play .body-part {
+  animation: puff 0.8s cubic-bezier(0.2, 1.25, 0.4, 1) 0.15s both;
+}
+
+.login-page-wrap.play .steam-group path {
+  animation: rise 0.75s cubic-bezier(0.3, 0.7, 0.2, 1) calc(0.8s + var(--i) * 0.12s) forwards;
+}
+
+.login-page-wrap.play .ray-part {
+  animation: shoot 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) calc(1.05s + var(--i) * 0.05s) forwards;
+}
+
+.login-page-wrap.play .spark-part {
+  animation: pop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2) calc(1.6s + var(--i) * 0.18s) forwards;
+}
+
+@keyframes puff {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes rise {
+  to { clip-path: inset(0); }
+}
+
+@keyframes shoot {
+  from { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.35); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0) rotate(-90deg); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Still / Reduced motion / Skipped */
+.login-page-wrap.still .body-part,
+.login-page-wrap.still .ray-part,
+.login-page-wrap.still .spark-part {
+  opacity: 1;
+  animation: none;
+}
+
+.login-page-wrap.still .steam-group path {
+  clip-path: none;
+  animation: none;
+}

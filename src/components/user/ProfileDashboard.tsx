@@ -132,7 +132,7 @@ export default function ProfileDashboard() {
         {[
           { label: 'Titles Watched', value: stats.titlesWatched },
           { label: 'Hours Watched', value: stats.hoursWatched },
-          { label: 'My List Size', value: stats.listSize },
+          
           { label: 'Reviews', value: stats.reviewsWritten, href: '/profile/reviews' },
         ].map(s => (
           s.href ? (<Link key={s.label} href={s.href} className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-lg flex flex-col items-center text-center hover:bg-white/10 transition-colors">
@@ -182,7 +182,7 @@ export default function ProfileDashboard() {
               {/* Assuming watchlist is populated, display max 6 */}
               {(watchlist || []).slice(0, 6).map((item: any) => (
                 <div key={item.id} className="w-24 md:w-32 aspect-[2/3] rounded-lg bg-neutral-800 overflow-hidden shrink-0 border border-white/10">
-                  <img src={item.posterPath || item.media?.posterPath || '/logo_vector.svg'} alt={item.title || item.media?.title} className="w-full h-full object-cover" />
+                  <img src={item.posterPath || item.media?.posterPath || '/logo.svg'} alt={item.title || item.media?.title} className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>

@@ -46,7 +46,7 @@ export default function PlayerFallback({ stats, isPlaying, videoRef, onRetry, on
   if (!isStalled) return null;
 
   return (
-    <div className="absolute inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 text-center animate-in fade-in duration-500">
+    <div className="absolute inset-0 z-50 /* [RECTIFICATION:BLURRED_LOADING_SCREEN] */ bg-black/45 backdrop-blur-2xl flex items-center justify-center p-6 text-center animate-in fade-in duration-500">
       <div className="max-w-md w-full flex flex-col items-center">
         <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-2xl relative">
           <div className="absolute inset-0 border-2 border-red-500 rounded-full animate-ping opacity-20" />

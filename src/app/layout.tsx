@@ -14,6 +14,7 @@ import { SearchCard } from '../components/search/SearchCard';
 import { IntroGate } from '../components/layout/IntroGate';
 import { SessionProvider } from 'next-auth/react';
 import { NotificationProvider } from '../components/ui/NotificationProvider';
+import { SmoothScroll } from '../components/ui/smooth-scroll';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
@@ -38,21 +39,23 @@ export default function RootLayout({
       <html lang="en">
         {/* bg-black: pure black base so ambient canvas blends correctly */}
         <body className={`${inter.variable} ${sora.variable} ${outfit.variable} ${bricolage.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-body text-text bg-black`}>
-          <NotificationProvider>
-            <SessionProvider>
-              <IntroGate />
-              <AmbientProvider enabled={featureFlags.ambientBackground}>
-                <AmbientSync />
-                <ThemeProvider>
-                  <Navbar />
-                  <MainLayout>{children}</MainLayout>
-                  <FloatingNavDock />
-                  <SearchCard />
-                </ThemeProvider>
-                <AmbientDebug />
-              </AmbientProvider>
-            </SessionProvider>
-          </NotificationProvider>
+          <SmoothScroll>
+            <NotificationProvider>
+              <SessionProvider>
+                <IntroGate />
+                <AmbientProvider enabled={featureFlags.ambientBackground}>
+                  <AmbientSync />
+                  <ThemeProvider>
+                    <Navbar />
+                    <MainLayout>{children}</MainLayout>
+                    <FloatingNavDock />
+                    <SearchCard />
+                  </ThemeProvider>
+                  <AmbientDebug />
+                </AmbientProvider>
+              </SessionProvider>
+            </NotificationProvider>
+          </SmoothScroll>
         </body>
       </html>
     </ViewTransitions>

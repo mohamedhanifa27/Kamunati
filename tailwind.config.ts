@@ -28,6 +28,7 @@ const config: Config = {
       fontFamily: {
         heading: ['var(--font-heading)'],
         body: ['var(--font-body)'],
+        pixelcode: ['PixelCode', 'monospace'],
       },
       borderRadius: {
         sm: 'var(--radius-sm)',
@@ -35,6 +36,17 @@ const config: Config = {
         lg: 'var(--radius-lg)',
         xl: 'var(--radius-xl)',
         pill: 'var(--radius-pill)',
+      },
+      // [RECTIFICATION:IMPROVE_ANIMATIONS]
+      transitionTimingFunction: {
+        'ease-apple': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'ease-spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'ease-drawer': 'cubic-bezier(0.32, 0.72, 0, 1)',
+      },
+      transitionDuration: {
+        '160': '160ms',
+        '220': '220ms',
+        '280': '280ms',
       }
     },
   },

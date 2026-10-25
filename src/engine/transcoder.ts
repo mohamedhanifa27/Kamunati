@@ -9,7 +9,7 @@ if (ffmpegPath) {
 export function needsTranscoding(filename: string): boolean {
   const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
   // Simplified logic for example; could inspect streams dynamically using ffprobe
-  return ['.mkv', '.avi', '.wmv'].includes(ext);
+  return ['.avi', '.wmv'].includes(ext);
 }
 
 export function streamTranscoded(inputStream: NodeJS.ReadableStream, reply: FastifyReply) {
@@ -19,11 +19,12 @@ export function streamTranscoded(inputStream: NodeJS.ReadableStream, reply: Fast
 
   const command = ffmpeg()
     .input(inputStream as any)
-    .videoCodec('copy') // Try to copy video stream
+    .videoCodec('libx264') // Actually transcode video to h264 for browser compat
     .audioCodec('aac')
     .audioBitrate('192k')
     .outputFormat('mp4')
     .outputOptions([
+      '-preset ultrafast', // Use ultrafast preset to avoid massive CPU load
       '-movflags frag_keyframe+empty_moov+default_base_moof',
       '-reset_timestamps 1'
     ])

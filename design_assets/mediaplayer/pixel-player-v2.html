@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pixel Player</title>
+<!-- Pixelcode: self-host the font at fonts/PixelCode.woff2 (or install it locally). Pixelify Sans is only a fallback. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap">
+<style>
+@font-face{font-family:Pixelcode;src:local("Pixel Code"),local("PixelCode"),url(fonts/PixelCode.woff2) format("woff2");font-display:swap}
+:root{--a:#501A96;--b:#108AC2;--bg:#0a0a0a;--ink:#fff;--dim:rgba(255,255,255,.62);
+--f:Pixelcode,"Pixelify Sans",ui-monospace,monospace;--flow:linear-gradient(100deg,var(--a),var(--b),var(--a))}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--f);-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#000;color:var(--ink)}
+body{display:grid;place-items:center;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom))}
+button{color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,input:focus-visible,.speed:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@keyframes flow{to{background-position:200% 0}}
+svg{fill:#fff}
+
+.pp{position:relative;width:min(100%,1100px);aspect-ratio:16/9;background:#000;overflow:hidden;border-radius:4px;container-type:size;isolation:isolate;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.pp:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0}
+.pp.idle{cursor:none}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+
+/* top: download speed */
+.top{position:absolute;inset:0 0 auto;z-index:5;display:flex;justify-content:flex-end;padding:12px 14px 40px;background:linear-gradient(#000a,transparent);pointer-events:none}
+.pp.idle .top{background:none}
+.speed{pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;background:rgba(0,0,0,.5);border-radius:3px;font-size:13px}
+.speed svg{width:14px;height:14px;fill:var(--b)}
+.speed b{font-weight:400}
+.speed u{text-decoration:none;color:var(--dim);font-size:11px}
+.speed span{display:inline-block;min-width:10ch;text-align:right}
+
+/* centre play */
+.big{position:absolute;inset:0;margin:auto;width:76px;height:76px;z-index:4;display:grid;place-items:center;border-radius:50%;background:rgba(0,0,0,.45);border:2px solid #fff}
+.big svg{width:34px;height:34px;margin-left:4px}
+.pp.playing .big,.pp.loading .big{display:none}
+
+/* subtitles */
+.sub{position:absolute;left:8%;right:8%;bottom:96px;z-index:3;text-align:center;white-space:pre-line;pointer-events:none;
+font-size:clamp(13px,2.6cqw,24px);line-height:1.35;transition:bottom .25s;text-shadow:0 0 4px #000,2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000}
+.pp.idle .sub{bottom:22px}
+
+/* bottom controls */
+.bot{position:absolute;inset:auto 0 0;z-index:5;padding:40px 14px 8px;background:linear-gradient(transparent,#000d);transition:opacity .3s}
+.pp.idle .bot{opacity:0;pointer-events:none}
+.seekrow{display:flex;align-items:center;gap:12px}
+.seek{flex:1;height:20px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+.rail{position:relative;width:100%;height:4px;background:rgba(255,255,255,.28);transition:height .15s}
+.seek:hover .rail{height:6px}
+.buf,.fill{position:absolute;inset:0 auto 0 0;width:0}
+.buf{background:rgba(255,255,255,.3)}
+.fill{background:var(--flow);background-size:200% 100%;animation:flow 6s linear infinite}
+.fill::after{content:"";position:absolute;right:-7px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--b);transition:transform .15s}
+.seek:hover .fill::after{transform:scale(1.25)}
+#rem{font-size:12px;color:var(--dim);min-width:6ch;text-align:right}
+.row{display:flex;align-items:center;gap:2px;margin-top:2px}
+.btn{width:42px;height:42px;display:grid;place-items:center}
+.btn svg{width:26px;height:26px}
+.btn:hover svg{transform:scale(1.12)}
+.i-pause{display:none}.pp.playing .i-pause{display:block}.pp.playing .i-play2{display:none}
+.pp.muted .wave{display:none}
+.vg{display:flex;align-items:center}
+.vg input{width:0;opacity:0;transition:width .2s,opacity .2s}
+.vg:hover input,.vg:focus-within input{width:76px;opacity:1;margin:0 8px}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;cursor:pointer;background:linear-gradient(90deg,#fff var(--v,100%),rgba(255,255,255,.3) var(--v,100%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:0}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:0}
+.ttl{flex:1;text-align:center;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 10px}
+
+/* tracks menu */
+.menu{position:absolute;right:12px;bottom:92px;z-index:8;width:min(340px,calc(100% - 24px));max-height:70%;display:flex;flex-direction:column;
+background:rgba(20,20,20,.97);border-radius:4px;box-shadow:0 8px 40px #000;opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s}
+.menu.open{opacity:1;transform:none;pointer-events:auto}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(255,255,255,.12)}
+.tabs button{padding:13px 0 11px;font-size:12px;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:#fff;border-image:linear-gradient(90deg,var(--a),var(--b)) 1}
+.list{overflow:auto;padding:6px 0}
+.opt{display:grid;grid-template-columns:16px 1fr auto;gap:10px;align-items:center;width:100%;padding:11px 14px;text-align:left;font-size:13px;color:var(--dim)}
+.opt:hover{background:rgba(255,255,255,.07)}
+.opt.on{color:#fff}
+.opt.on i::before{content:"";display:block;width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-3px)}
+.opt em{font-style:normal;font-size:11px;opacity:.7}
+
+/* loader: monotone line mark */
+.load{position:absolute;inset:0;z-index:7;display:grid;place-content:center;justify-items:center;gap:16px;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .3s}
+.pp.loading .load{opacity:1;pointer-events:auto}
+.mark{height:min(34cqh,170px);width:auto}
+.mark path,.mark circle{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.mark .d{stroke-dasharray:1;animation:draw 2.6s cubic-bezier(.6,0,.3,1) infinite}
+.mark .c2{animation-delay:.18s}.mark .s1{animation-delay:.36s}.mark .s2{animation-delay:.48s}.mark .s3{animation-delay:.6s}
+@keyframes draw{0%{stroke-dashoffset:1}42%,72%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+.mark circle{fill:#fff;stroke:none;transform-box:fill-box;transform-origin:center;animation:beat 1.3s ease-in-out infinite}
+@keyframes beat{50%{transform:scale(.4);opacity:.4}}
+.lt{font-size:clamp(11px,1.9cqw,14px);color:var(--dim);text-align:center}
+.dots{display:inline-block;width:3ch;overflow:hidden;vertical-align:bottom;text-align:left;animation:dots 1.2s steps(4) infinite}
+@keyframes dots{from{width:0}to{width:4ch}}
+.pp.err .mark *,.pp.err .dots{animation-play-state:paused}
+
+@media(max-width:560px){
+.menu{inset:auto 0 0;width:100%;max-height:78%;border-radius:0}
+.vg,.ttl{display:none}.row{justify-content:space-between}.bot{padding:30px 10px 6px}.big{width:64px;height:64px}.row .push{margin-left:auto}}
+@media(prefers-reduced-motion:reduce){.fill{animation-duration:30s}.mark *{animation-duration:6s}}
+</style>
+</head>
+<body>
+<div class="pp" id="pp">
+  <video id="v" playsinline preload="auto"></video>
+  <div class="sub" id="sub"></div>
+  <button class="big" id="big" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+
+  <div class="top">
+    <div class="speed" id="spd" role="button" tabindex="0" title="Tap to switch MB/s and Mb/s">
+      <svg viewBox="0 0 24 24"><path d="M11 3h2v12l4-4 1.4 1.4L12 19l-6.4-6.6L7 11l4 4z"/></svg>
+      <span><b id="sv">0.00</b> <u id="su">KB/s</u></span>
+    </div>
+  </div>
+
+  <div class="menu" id="menu"><div class="tabs" id="tabs"></div><div class="list" id="list"></div></div>
+
+  <div class="bot">
+    <div class="seekrow">
+      <div class="seek" id="sk"><div class="rail"><div class="buf" id="buf"></div><div class="fill" id="fill"></div></div></div>
+      <span id="rem">-00:00</span>
+    </div>
+    <div class="row">
+      <button class="btn" id="pl" aria-label="Play or pause">
+        <svg class="i-play2" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+      </button>
+      <button class="btn" id="back" aria-label="Back 10 seconds"><svg viewBox="0 0 24 24"><path d="M12 5a8 8 0 1 1-5.7 2.5" fill="none" stroke="#fff" stroke-width="2"/><path d="M12 1.5L7.5 5 12 8.5z"/><text x="12" y="16.5" text-anchor="middle" font-size="7" stroke="none">10</text></svg></button>
+      <button class="btn" id="fwd" aria-label="Forward 10 seconds"><svg viewBox="0 0 24 24"><g transform="matrix(-1 0 0 1 24 0)"><path d="M12 5a8 8 0 1 1-5.7 2.5" fill="none" stroke="#fff" stroke-width="2"/><path d="M12 1.5L7.5 5 12 8.5z"/></g><text x="12" y="16.5" text-anchor="middle" font-size="7" stroke="none">10</text></svg></button>
+      <div class="vg">
+        <button class="btn" id="mu" aria-label="Mute"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9z"/><path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#fff" stroke-width="2"/></svg></button>
+        <input id="vol" type="range" min="0" max="1" step=".05" value="1" aria-label="Volume">
+      </div>
+      <span class="ttl" id="ti"></span>
+      <button class="btn push" id="trk" aria-label="Torrent, audio, language and subtitles"><svg viewBox="0 0 24 24"><path d="M3 5h18v12H11l-4 3.5V17H3z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M7 10h4M13 10h4M7 13.5h6" stroke="#fff" stroke-width="2"/></svg></button>
+      <button class="btn" id="fs" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4zM14 4h6v6h-2V6h-4zM4 14h2v4h4v2H4zM18 14h2v6h-6v-2h4z"/></svg></button>
+    </div>
+  </div>
+
+  <!-- Loader: one-colour line mark (cloud, camera, steam) drawn on a loop -->
+  <div class="load">
+    <svg class="mark" viewBox="0 -24 124 124" aria-hidden="true">
+      <path class="d" pathLength="1" d="M34 80A16 16 0 0 1 24 52A15 15 0 0 1 40 32A20 20 0 0 1 76 28A16 16 0 0 1 92 56A15 15 0 0 1 80 80A14 14 0 0 1 57 82A14 14 0 0 1 34 80Z"/>
+      <path class="d c2" pathLength="1" d="M91 50L112 38V77L88 67"/>
+      <circle cx="68" cy="44" r="4"/>
+      <path class="d s1" pathLength="1" d="M46 0c-5-5 5-9 0-15"/>
+      <path class="d s2" pathLength="1" d="M58 -3c-5-5 5-9 0-15"/>
+      <path class="d s3" pathLength="1" d="M70 0c-5-5 5-9 0-15"/>
+    </svg>
+    <p class="lt"><span id="lm">Connecting to peers</span><span class="dots">...</span> <span id="ls"></span></p>
+  </div>
+</div>
+
+<script>
+/* ---------- CONFIG: wire these to your torrent backend ---------- */
+const CONFIG = {
+  title: 'Big Buck Bunny',
+  src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  getDownloadSpeed: null,                 // () => bytes per second, e.g. () => torrent.downloadSpeed
+  onSelect: (kind, item) => {},           // fires for torrent / audio / lang / subs changes
+  tracks: {
+    torrent: [
+      {id:'t1', label:'1080p WEB-DL x265', meta:'182 seeds · 1.2 GB', size:1.2e9, src:null},
+      {id:'t2', label:'720p WEB x264',     meta:'96 seeds · 650 MB',  size:6.5e8, src:null},
+      {id:'t3', label:'480p HDTV',         meta:'41 seeds · 320 MB',  size:3.2e8, src:null}],
+    audio: [
+      {id:'a1', label:'EAC3 5.1', meta:'640 kbps'},
+      {id:'a2', label:'AAC 2.0',  meta:'192 kbps'},
+      {id:'a3', label:'Opus 2.0', meta:'128 kbps'}],
+    lang: [
+      {id:'en', label:'English'}, {id:'es', label:'Spanish'}, {id:'fr', label:'French'}, {id:'de', label:'German'}],
+    subs: [
+      {id:'off', label:'Off'},
+      {id:'en', label:'English', meta:'VTT', src:null},   // src:null = demo cues; pass a .vtt URL in your app
+      {id:'es', label:'Spanish', meta:'VTT', src:null},
+      {id:'fr', label:'French',  meta:'VTT', src:null}]
+  }
+};
+
+/* ---------- player ---------- */
+const $ = s => document.querySelector(s), v = $('#v'), pp = $('#pp'), T = CONFIG.tracks, menu = $('#menu');
+const sel = {torrent:'t1', audio:'a1', lang:'en', subs:'off'}, NAMES = {torrent:'Torrent', audio:'Audio', lang:'Language', subs:'Subtitles'};
+let tab = 'torrent', hideT;
+const f = s => isFinite(s) ? String(s/60|0).padStart(2,'0') + ':' + String(s%60|0).padStart(2,'0') : '00:00';
+const load = (on, msg) => { pp.classList.toggle('loading', on); if (msg) $('#lm').textContent = msg; };
+
+/* loading states */
+v.src = CONFIG.src; $('#ti').textContent = CONFIG.title; load(true);
+v.addEventListener('waiting', () => load(true, 'Buffering'));
+v.addEventListener('seeking', () => v.readyState < 3 && load(true, 'Buffering'));
+['canplay','playing','seeked'].forEach(e => v.addEventListener(e, () => { pp.classList.remove('err'); load(false); }));
+v.addEventListener('error', () => { pp.classList.add('err'); load(true, 'Source unavailable. Check the torrent'); });
+
+/* transport */
+const toggle = () => v.paused ? v.play().catch(() => {}) : v.pause();
+$('#big').onclick = $('#pl').onclick = toggle; v.onclick = () => { menu.classList.remove('open'); toggle(); };
+$('#back').onclick = () => v.currentTime -= 10; $('#fwd').onclick = () => v.currentTime += 10;
+['play','pause'].forEach(e => v.addEventListener(e, () => { pp.classList.toggle('playing', !v.paused); wake(); }));
+v.addEventListener('timeupdate', () => {
+  $('#rem').textContent = '-' + f(v.duration - v.currentTime);
+  $('#fill').style.width = (v.duration ? v.currentTime / v.duration * 100 : 0) + '%';
+});
+const sk = $('#sk'), seekTo = e => { const r = sk.getBoundingClientRect();
+  v.currentTime = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * (v.duration || 0); };
+sk.onpointerdown = e => { sk.setPointerCapture(e.pointerId); seekTo(e); sk.onpointermove = seekTo; };
+sk.onpointerup = () => sk.onpointermove = null;
+const vol = $('#vol'); vol.oninput = () => { v.volume = vol.value; v.muted = false; };
+$('#mu').onclick = () => v.muted = !v.muted;
+v.addEventListener('volumechange', () => {
+  const m = v.muted || v.volume === 0; pp.classList.toggle('muted', m);
+  vol.value = m ? 0 : v.volume; vol.style.setProperty('--v', vol.value * 100 + '%'); });
+$('#fs').onclick = () => document.fullscreenElement ? document.exitFullscreen()
+  : pp.requestFullscreen ? pp.requestFullscreen() : v.webkitEnterFullscreen && v.webkitEnterFullscreen();
+
+/* idle hide */
+function wake() { pp.classList.remove('idle'); clearTimeout(hideT);
+  hideT = setTimeout(() => !v.paused && !menu.classList.contains('open') && pp.classList.add('idle'), 2600); }
+['pointermove','pointerdown'].forEach(e => pp.addEventListener(e, wake));
+
+/* tracks menu */
+function render() {
+  $('#tabs').innerHTML = Object.keys(T).map(k => `<button data-t="${k}" class="${k === tab ? 'on' : ''}">${NAMES[k]}</button>`).join('');
+  $('#list').innerHTML = T[tab].map(o => `<button class="opt ${sel[tab] === o.id ? 'on' : ''}" data-id="${o.id}"><i></i><span>${o.label}</span><em>${o.meta || ''}</em></button>`).join('');
+}
+$('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) { tab = b.dataset.t; render(); } };
+$('#list').onclick = e => { const b = e.target.closest('.opt'); if (b) pick(tab, b.dataset.id); };
+$('#trk').onclick = () => { menu.classList.toggle('open'); wake(); };
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.menu,#trk')) menu.classList.remove('open'); });
+
+function pick(k, id) {
+  sel[k] = id; const o = T[k].find(x => x.id === id);
+  if (k === 'subs') { T.subs.forEach(s => s._t && (s._t.mode = s.id === id ? 'hidden' : 'disabled')); $('#sub').textContent = ''; }
+  if (k === 'torrent') {
+    load(true, 'Switching torrent');
+    if (o.src) { const t = v.currentTime, p = !v.paused; v.src = o.src;
+      v.addEventListener('loadedmetadata', () => { v.currentTime = t; p && v.play(); }, {once:true}); }
+    else setTimeout(() => v.readyState >= 3 && load(false), 1200);
+  }
+  if (k === 'audio' && v.audioTracks && v.audioTracks.length) [...v.audioTracks].forEach((a, i) => a.enabled = i === T.audio.indexOf(o));
+  CONFIG.onSelect && CONFIG.onSelect(k, o); render();
+}
+
+/* subtitles (drawn by the player so they use Pixelcode) */
+const demoVTT = s => 'WEBVTT\n\n' + Array.from({length:60}, (_, i) =>
+  `${f(i*5)}.000 --> ${f(i*5+4)}.000\n[${s.label}] subtitle line ${i + 1}\n`).join('\n');
+function mkTrack(s) {
+  if (s.id === 'off' || s._t) return;
+  const t = document.createElement('track'); t.kind = 'subtitles'; t.label = s.label; t.srclang = s.id;
+  t.src = s.src || URL.createObjectURL(new Blob([demoVTT(s)], {type:'text/vtt'}));
+  v.appendChild(t); s._t = t.track; s._t.mode = 'disabled';
+  s._t.addEventListener('cuechange', () => { if (sel.subs === s.id) $('#sub').textContent = [...s._t.activeCues].map(c => c.text).join('\n'); });
+}
+
+/* download speed meter */
+let spd = 0, lastEnd = 0, bits = false;
+function fmt(b) {
+  if (bits) b *= 8;
+  const u = bits ? ['Kb/s','Mb/s','Gb/s','Tb/s'] : ['KB/s','MB/s','GB/s','TB/s']; b /= 1000; let i = 0;
+  while (b >= 1000 && i < 3) { b /= 1000; i++; }
+  return [b >= 100 ? b.toFixed(0) : b >= 10 ? b.toFixed(1) : b.toFixed(2), u[i]];
+}
+$('#spd').onclick = () => { bits = !bits; tick(); };
+$('#spd').onkeydown = e => (e.key === 'Enter' || e.key === ' ') && $('#spd').click();
+function tick() {
+  const b = v.buffered, end = b.length ? b.end(b.length - 1) : 0; let raw;
+  if (CONFIG.getDownloadSpeed) raw = CONFIG.getDownloadSpeed() || 0;
+  else {   /* fallback estimate: buffered video-seconds gained × selected torrent's bytes per second */
+    const size = (T.torrent.find(x => x.id === sel.torrent) || {}).size || 0;
+    raw = Math.max(0, end - lastEnd) / .5 * (size / (v.duration || 600));
+  }
+  lastEnd = end; spd = spd * .6 + raw * .4; if (spd < 50) spd = 0;
+  const [n, u] = fmt(spd); $('#sv').textContent = n; $('#su').textContent = u;
+  $('#buf').style.width = (v.duration ? end / v.duration * 100 : 0) + '%';
+  $('#ls').textContent = v.duration ? Math.round(end / v.duration * 100) + '%' : '';
+}
+setInterval(tick, 500);
+
+/* keyboard */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.id === 'spd') return; const k = e.key; wake();
+  if (k === ' ' || k === 'k') { e.preventDefault(); toggle(); }
+  else if (k === 'ArrowRight') v.currentTime += 10; else if (k === 'ArrowLeft') v.currentTime -= 10;
+  else if (k === 'ArrowUp') v.volume = Math.min(1, v.volume + .1); else if (k === 'ArrowDown') v.volume = Math.max(0, v.volume - .1);
+  else if (k === 'm') v.muted = !v.muted; else if (k === 'f') $('#fs').click();
+  else if (k === 'c') pick('subs', sel.subs === 'off' ? 'en' : 'off');
+});
+
+T.subs.forEach(mkTrack); render(); vol.style.setProperty('--v', '100%');
+
+/* public hooks for your app */
+window.PixelPlayer = { video: v, config: CONFIG, setLoading: load,
+  setSpeed: n => CONFIG.getDownloadSpeed = () => n,
+  setTracks: t => { Object.assign(T, t); T.subs.forEach(mkTrack); render(); } };
+</script>
+</body>
+</html>

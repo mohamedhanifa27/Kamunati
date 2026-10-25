@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { requireAdmin } from '../../middleware/auth';
 import { torrentAttachSchema } from '../../validators/mediaSchema';
 import { PrismaClient } from '@prisma/client';
-import { inspectTorrent } from '../../engine/torrentEngine';
+import { inspectTorrent, enrichMagnetUri } from '../../engine/torrentEngine';
 
 const prisma = new PrismaClient();
 
@@ -38,7 +38,7 @@ export default async function adminTorrentRoutes(fastify: FastifyInstance) {
         data: {
           mediaId,
           episodeId,
-          magnetUri,
+          magnetUri: enrichMagnetUri(magnetUri),
           infoHash,
           fileIndex,
           resolution,

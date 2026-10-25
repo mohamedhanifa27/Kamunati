@@ -38,7 +38,7 @@ export default async function TitlePage({ params }: { params: Promise<{ id: stri
     return {
       id: m.id,
       title: m.title,
-      posterUrl: m.posterPath || m.backdropPath || '/logo_vector.svg',
+      posterUrl: m.posterPath || m.backdropPath || '/logo.svg',
       backdropUrl: m.backdropPath || m.posterPath,
       category: m.category,
       releaseYear: m.releaseYear,
@@ -52,7 +52,7 @@ export default async function TitlePage({ params }: { params: Promise<{ id: stri
       <div className="relative h-[60vh] md:h-[70vh] w-full">
         <div className="absolute inset-0">
           <img 
-            src={media.backdropPath || media.posterPath || '/logo_vector.svg'}
+            src={media.backdropPath || media.posterPath || '/logo.svg'}
             alt={media.title}
             className="w-full h-full object-cover"
           />
@@ -61,16 +61,32 @@ export default async function TitlePage({ params }: { params: Promise<{ id: stri
         </div>
         
         <div className="relative z-10 h-full flex flex-col justify-end px-8 md:px-16 pb-12">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4">{media.title}</h1>
+          {/* [RECTIFICATION:PIXEL_FONT_DESCRIPTION_AND_TITLE_LOGO] */}
+          {/* Title: render media title logo if available, fallback to title heading */}
+          {media.logoPath ? (
+            <div className="mb-4 max-w-sm md:max-w-md">
+              <img 
+                src={media.logoPath} 
+                alt={media.title} 
+                className="max-h-24 md:max-h-36 w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]" 
+              />
+            </div>
+          ) : (
+            <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4">{media.title}</h1>
+          )}
           <div className="flex items-center gap-4 text-sm font-medium text-neutral-300 mb-6">
             <span>{media.releaseYear}</span>
             <span>{media.category?.replace('_', ' ')}</span>
             {media.rating && <span>{media.rating}</span>}
             {media.runtime && <span>{Math.floor(media.runtime / 60)}h {media.runtime % 60}m</span>}
           </div>
-          <p className="max-w-2xl text-lg text-neutral-200 mb-8 line-clamp-3">
-            {media.overview}
-          </p>
+          {/* [RECTIFICATION:PIXEL_FONT_DESCRIPTION_AND_TITLE_LOGO] */}
+          {/* Description: render overview with pixel font */}
+          {media.overview && (
+            <p className="max-w-2xl text-base md:text-lg text-neutral-200 mb-8 line-clamp-3 font-pixelcode tracking-wide leading-relaxed">
+              {media.overview}
+            </p>
+          )}
           <div className="flex items-center gap-4">
             <Link 
               href={`/watch/${media.id}`}

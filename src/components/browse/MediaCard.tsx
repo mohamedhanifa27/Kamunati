@@ -35,6 +35,8 @@ export interface MediaCardProps {
     genres?: string[];
   };
   linkHref?: string;
+  overview?: string;
+  logoUrl?: string | null;
 }
 
 export default function MediaCard({
@@ -52,7 +54,9 @@ export default function MediaCard({
   hoverClipUrl,
   hoverTagline,
   metadata,
-  linkHref
+  linkHref,
+  overview,
+  logoUrl
 }: MediaCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -163,6 +167,7 @@ export default function MediaCard({
   
   return (
     <>
+      {/* [RECTIFICATION:IMPROVE_ANIMATIONS] Fluid Apple-style glide and tactile active press feedback */}
       <Link 
         ref={cardRef}
         href={linkHref || `/watch/${id}`}
@@ -171,10 +176,10 @@ export default function MediaCard({
         onFocus={handleFocus}
         onBlur={handleBlur}
         onTouchStart={handleTouch}
-        className={`relative rounded-md cursor-pointer bg-neutral-900 group block ${sizeClass} ${outlineStyle}`}
+        className={`relative rounded-md cursor-pointer bg-neutral-900 group block ${sizeClass} ${outlineStyle} active:scale-[0.98]`}
         style={{
           transform: transformStyle,
-          transition: `transform var(--dur-fast) ease-out, box-shadow var(--dur-fast) ease-out`,
+          transition: `transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1)`,
           zIndex: isLifted ? 30 : 1, // ensure it overlaps neighbours when lifted
           '--card-glow': primaryHex, // expose variable for the pseudo-element glow
         } as any}
@@ -206,12 +211,21 @@ export default function MediaCard({
           </div>
         )}
 
-        {/* Default Title Overlay for poster variant (if no children provided) */}
+        {/* [RECTIFICATION:PIXEL_FONT_DESCRIPTION_AND_TITLE_LOGO] */}
+        {/* Default Title Overlay for poster variant: render logo if available, fallback to title */}
         {variant === 'poster' && !children && (
           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4 z-20 rounded-md">
-            <h3 className="text-text text-sm md:text-base font-semibold line-clamp-2">
-              {title}
-            </h3>
+            {logoUrl ? (
+              <img 
+                src={logoUrl} 
+                alt={title} 
+                className="max-h-10 max-w-[85%] object-contain filter drop-shadow-md mb-1" 
+              />
+            ) : (
+              <h3 className="text-text text-sm md:text-base font-semibold line-clamp-2">
+                {title}
+              </h3>
+            )}
           </div>
         )}
 
@@ -228,7 +242,7 @@ export default function MediaCard({
         {showBanner && cardRef.current && (
           <HoverBanner 
             anchorElement={cardRef.current}
-            media={{ id, title, hoverBannerUrl, hoverClipUrl, backdropUrl, posterUrl, hoverTagline, ambientPalette, metadata }}
+            media={{ id, title, overview, logoUrl, hoverBannerUrl, hoverClipUrl, backdropUrl, posterUrl, hoverTagline, ambientPalette, metadata }}
             onPointerEnter={() => {
               if (leaveTimer.current) clearTimeout(leaveTimer.current);
             }}

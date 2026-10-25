@@ -8,6 +8,7 @@ export interface TorrentMetadata {
   infoHash: string;
   name: string;
   files: { name: string; path: string; length: number; index: number }[];
+  magnetUri?: string;
 }
 
 interface TorrentUploaderProps {
@@ -23,15 +24,15 @@ export default function TorrentUploader({ onParsed }: TorrentUploaderProps) {
     setIsProcessing(true);
     setError(null);
     try {
-      // Hitting the engine route we made earlier to inspect the magnet link
-      const res = await fetch(`/api/v1/torrent/inspect?magnet=${encodeURIComponent(uri)}`);
+      // Hitting the engine route to inspect the magnet link
+      const res = await fetch(`http://localhost:8080/api/v1/torrent/inspect?magnet=${encodeURIComponent(uri)}`);
       if (!res.ok) throw new Error('Failed to parse torrent via DHT.');
       
       const data = await res.json();
       
       // Inject index into files array
-      const filesWithIndex = data.files.map((f: any, idx: number) => ({ ...f, index: idx }));
-      onParsed({ ...data, files: filesWithIndex });
+      const filesWithIndex = (data.files || []).map((f: any, idx: number) => ({ ...f, index: idx }));
+      onParsed({ ...data, files: filesWithIndex, magnetUri: uri });
       
     } catch (err: any) {
       setError(err.message || 'Unknown error parsing magnet link.');
@@ -40,14 +41,39 @@ export default function TorrentUploader({ onParsed }: TorrentUploaderProps) {
     }
   };
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    // In a real app, read the .torrent file buffer, parse it, and construct a magnet uri
-    // or send the raw buffer to the backend for inspection.
-    // For this implementation, we will simulate the drop and error since we need a backend endpoint for files.
-    setError('Direct .torrent file upload requires backend parser. Please paste a Magnet URI for now.');
-  }, []);
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+    const file = acceptedFiles[0];
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: { 'application/x-bittorrent': ['.torrent'] } });
+    setIsProcessing(true);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/admin/torrent/parse', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to parse .torrent file');
+      }
+
+      onParsed(data);
+    } catch (err: any) {
+      setError(err.message || 'Error processing .torrent file');
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [onParsed]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
+    onDrop, 
+    accept: { 'application/x-bittorrent': ['.torrent'] },
+    multiple: false
+  });
 
   const handleMagnetSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +89,9 @@ export default function TorrentUploader({ onParsed }: TorrentUploaderProps) {
         {/* Dropzone */}
         <div 
           {...getRootProps()} 
-          className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/10' : 'border-white/20 hover:border-white/40 hover:bg-white/5'}`}
+          className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
+            isDragActive ? 'border-primary bg-primary/10' : 'border-white/20 hover:border-white/40 hover:bg-white/5'
+          }`}
         >
           <input {...getInputProps()} />
           <UploadCloud size={40} className={`mb-3 ${isDragActive ? 'text-primary' : 'text-white/40'}`} />
@@ -96,7 +124,7 @@ export default function TorrentUploader({ onParsed }: TorrentUploaderProps) {
               className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isProcessing ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
-              {isProcessing ? 'Inspecting DHT...' : 'Inspect Magnet'}
+              {isProcessing ? 'Inspecting Torrent...' : 'Inspect Magnet'}
             </button>
           </form>
         </div>
