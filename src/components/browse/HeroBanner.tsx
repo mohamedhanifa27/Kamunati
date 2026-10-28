@@ -74,12 +74,15 @@ export default function HeroBanner({ mediaId, title, overview, backdropUrl, logo
           <img 
             src={backdropUrl} 
             alt={title}
+            fetchPriority="high"
             onLoad={() => setImageLoaded(true)}
             className={`w-full h-full object-cover transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
+        {/* Horizontal dark tint: starts deep on left with Title & Description, smoothly fades as it approaches the focus point on the right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-bg from-20% via-bg/60 via-50% to-transparent to-85% md:from-15% md:via-bg/40 md:via-40% md:to-70% pointer-events-none" />
+        {/* Bottom fade: localized to bottom edge for smooth transition into media rows without darkening the upper focal area */}
+        <div className="absolute inset-x-0 bottom-0 h-40 md:h-56 bg-gradient-to-t from-bg via-bg/50 to-transparent pointer-events-none" />
       </div>
 
       {/* Content */}
@@ -96,7 +99,8 @@ export default function HeroBanner({ mediaId, title, overview, backdropUrl, logo
           <div className="max-w-md md:max-w-lg mb-4">
             <img 
               src={logoUrl} 
-              alt={title} 
+              alt={title}
+              fetchPriority="high" 
               className="max-h-24 sm:max-h-32 md:max-h-40 w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]" 
             />
           </div>

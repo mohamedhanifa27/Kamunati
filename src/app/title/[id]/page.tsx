@@ -56,8 +56,10 @@ export default async function TitlePage({ params }: { params: Promise<{ id: stri
             alt={media.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/40 to-transparent" />
+          {/* Bottom fade: localized to bottom edge for content blending */}
+          <div className="absolute inset-x-0 bottom-0 h-36 md:h-48 bg-gradient-to-t from-bg via-bg/50 to-transparent pointer-events-none" />
+          {/* Horizontal dark tint: starts with Title & Description on left, fades towards focus point on right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-bg from-20% via-bg/60 via-50% to-transparent to-85% md:from-15% md:via-bg/40 md:via-40% md:to-70% pointer-events-none" />
         </div>
         
         <div className="relative z-10 h-full flex flex-col justify-end px-8 md:px-16 pb-12">
